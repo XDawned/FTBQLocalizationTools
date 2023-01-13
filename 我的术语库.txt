@@ -1,0 +1,72 @@
+原文|||译文
+EnderIO|||末影科技
+Low Voltage|||低压
+GregTech|||格雷科技
+Piglin|||疣猪
+campfire|||营火
+soul sand|||灵魂沙
+mycelium|||菌丝
+wither|||凋零
+wither storm|||凋零风暴
+blocks|||方块
+mobs|||怪物
+mob|||怪物
+mana|||魔力
+aura|||灵气
+enderman|||末影人
+spawners|||刷怪笼
+spawner|||刷怪笼
+cloches|||园艺玻璃罩
+bedblock|||基岩
+spawn|||生成
+inventory|||物品栏
+bug|||bug
+drill|||钻头
+minecraft|||我的世界
+Create|||机械动力
+create|||创建
+vanilla|||原版
+portal|||传送门
+Tinker|||匠魂
+silk touch|||精准采集
+autosmelt|||自动熔炼
+nether|||地狱
+the end|||末地
+Sound Guard|||循声守卫
+mekanism|||通用机械
+silent gear|||寂静装备
+Deep Dark|||深邃洞穴
+enchanting|||附魔
+enchanting table|||附魔台
+ender dragon|||末影龙
+elytra|||鞘翅
+dimensional|||维度
+dimension|||维度
+refined storage|||精致存储
+Sophisticated Backpacks|||精致背包
+chests|||箱子
+chest room|||箱子空间
+string|||线
+multi-block|||多方块
+mod|||模组
+&a|||&a
+&r|||&r
+&1|||&1
+&2|||&2
+&3|||&3
+&4|||&4
+&5|||&5
+&6|||&6
+&7|||&7
+&8|||&8
+&9|||&9
+&0|||&0
+&b|||&b
+&c|||&c
+&d|||&d
+&e|||&e
+&f|||&f
+boss|||boss
+industrial foregoing|||工业先锋
+waystone|||传送石碑
+xdawned|||xdawned
