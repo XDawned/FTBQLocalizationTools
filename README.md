@@ -7,6 +7,7 @@ Usage:
 Put the ftbrequests folder and this program in the same directory and run it。
 PS：
 If you have a better idea or find some bugs, welcome to pr here！
+
 zh_ch
 介绍:
 一个使用百度API批量翻译任务的简单python程序
