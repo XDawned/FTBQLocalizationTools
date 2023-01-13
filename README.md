@@ -18,7 +18,7 @@ If you have a better idea or find some bugs, welcome to pr here！
 
 一个使用百度API批量翻译任务的简单python程序
 
-本程序更替思路受项目https://github.com/djacu/ftbquests_converter启发，并在其框架基础上进行了大量更新与优化，对标当前最新ftbquest的任务生成格式
+本程序更替思路受项目 https://github.com/djacu/ftbquests_converter 启发，并在其框架基础上进行了大量更新与优化，对标当前最新ftbquest的任务生成格式
 
 使用:
 
