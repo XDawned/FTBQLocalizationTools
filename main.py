@@ -83,14 +83,13 @@ def pre_process(line:str):
     if line.find('.jpg') + line.find('.png') != -2:
         return line  # 新版ftbquest可以展示图片，遇到图片则略过
     ## 情景2：彩色区域
-    # 彩色格式保留，碰到&.彩色格式在后方则加入空格分割来辅助百度api优化翻译效果（比如Hello &5world改为Hello &5 world）
-    # 强烈建议在术语库中手动添加术语保留&.，否则可能文本格式错误。（目前已知的彩色格式只有a~f,0~9全部依次录入即可）百度api大多可以返回包含&.的汉化结果。
+    # 彩色格式保留，让百度api忽略&
+    # 目前已知的彩色格式只有a~f,0~9全部依次录入即可）百度api大多可以返回包含&.的汉化结果。
     pattern = re.compile(r'&([a-z,0-9]|#[0-9,A-F]{6})')
     line = pattern.sub(bracket,line)
-    print("检测到包含彩色标识的任务,处理为" + line)
     ## 情景3：物品引用
     # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
-    # 这里给出的方案是先将引用替换为临时词‘xdawned’，术语库中设置xdawned-xdawned来保留此关键词，然后借此在翻译后的句子中定位xdawned用先前引用词换回
+    # 这里给出的方案是先将引用替换为临时词MAGIC_WORD，术语库中设置MAGIC_WORD-MAGIC_WORD来保留此关键词，然后借此在翻译后的句子中定位MAGIC_WORD用先前引用词换回
     line = re.sub(r'#\w+:\w+\b', MAGIC_WORD , re.sub(r'\\"', '\"',line)) # 辅助忽略转义符
     return line
 
@@ -105,7 +104,7 @@ def post_process(line,translate):
     if len(quotes)>0:
         print('在此行找到引用',quotes)
         count=0
-        # 找出xdawned出现的所有位置并替换为对应引用词
+        # 找出MAGIC_WORD出现的所有位置并替换为对应引用词
         index=translate.find(MAGIC_WORD)
         while index!=-1:
             translate=re.sub(MAGIC_WORD,quotes[count],translate,1)
