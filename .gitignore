@@ -1,0 +1,9 @@
+.vscode/*
+__pycache__
+*-trans/*
+config/*
+ftbquests/*
+reward_tables/*
+chapters/*
+quests/*
+config.py
