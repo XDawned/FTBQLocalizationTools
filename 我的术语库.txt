@@ -70,3 +70,4 @@ boss|||boss
 industrial foregoing|||工业先锋
 waystone|||传送石碑
 xdawned|||xdawned
+\"|||\"
