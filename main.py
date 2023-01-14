@@ -5,7 +5,7 @@ import re
 import random
 from typing import Tuple
 import requests
-
+from config import APPID, APPKEY
 
 def get_text_fields(quest: str) -> Tuple[str]:
     '''
@@ -37,8 +37,8 @@ def translate_line(line: str) -> str:
     try:
         # 关于语言选项参考文档 `https://api.fanyi.baidu.com/doc/21`
         # 百度appid/appkey.（PS：密钥随IP绑定，设置密钥时候注意设置正确的IP否则无法使用！！！）
-        appid = '20211231001043264'  # 请注册你自己的密钥
-        appkey = 'umhmUOazS1sa9xMK6fzR'  # 请注册你自己的密钥
+        appid = APPID  # 请注册你自己的密钥
+        appkey = APPKEY  # 请注册你自己的密钥
         from_lang = 'en'
         to_lang = 'zh'
         endpoint = 'http://api.fanyi.baidu.com'

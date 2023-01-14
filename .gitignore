@@ -1,1 +1,5 @@
+.vscode/*
+__pycache__
+ftbquest/*
 config/*
+config.py
