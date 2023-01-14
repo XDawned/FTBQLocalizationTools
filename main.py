@@ -5,8 +5,9 @@ import re
 import random
 from typing import Tuple
 import requests
-from config import APPID, APPKEY
+from config import *
 
+MAGIC_WORD = r'{xdawned}'
 def get_text_fields(quest: str) -> Tuple[str]:
     '''
     截取翻译区域
@@ -90,7 +91,7 @@ def pre_process(line:str):
     ## 情景3：物品引用
     # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
     # 这里给出的方案是先将引用替换为临时词‘xdawned’，术语库中设置xdawned-xdawned来保留此关键词，然后借此在翻译后的句子中定位xdawned用先前引用词换回
-    line = re.sub(r'#\w+:\w+\b', 'xdawned' , re.sub(r'\\"', '\"',line)) # 辅助忽略转义符
+    line = re.sub(r'#\w+:\w+\b', MAGIC_WORD , re.sub(r'\\"', '\"',line)) # 辅助忽略转义符
     return line
 
 
@@ -105,11 +106,11 @@ def post_process(line,translate):
         print('在此行找到引用',quotes)
         count=0
         # 找出xdawned出现的所有位置并替换为对应引用词
-        index=translate.find('xdawned')
+        index=translate.find(MAGIC_WORD)
         while index!=-1:
-            translate=re.sub('xdawned',quotes[count],translate,1)
+            translate=re.sub(MAGIC_WORD,quotes[count],translate,1)
             count=count+1
-            index = translate.find('xdawned')
+            index = translate.find(MAGIC_WORD)
         print(translate)
     replacement = translate + "[--" + line + "--]"  # 原文保留
     return replacement
@@ -165,10 +166,10 @@ def make_output_path(path: Path) -> Path:
 
 
 def main():
-    quest_path = Path("./config")#要翻译的目录【可选./ftbquests或./chapter，./chapter只翻译章节内容，./ftbquests额外包括战利品表名称、大章节标题等内容】
+    quest_path = Path(WORK_PATH)#要翻译的目录
     for input_path in quest_path.rglob("*.snbt"):
         output_path = make_output_path(input_path)#生成输出目录路径
         update_quest_file(input_path, output_path)#更新任务文件
 
 if __name__ == '__main__':
-    main()#需要先在translate_line函数中填入百度api密钥
+    main()#需要先在config.py中填入百度api密钥
