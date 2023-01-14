@@ -49,23 +49,6 @@ chest room|||箱子空间
 string|||线
 multi-block|||多方块
 mod|||模组
-&a|||&a
-&r|||&r
-&1|||&1
-&2|||&2
-&3|||&3
-&4|||&4
-&5|||&5
-&6|||&6
-&7|||&7
-&8|||&8
-&9|||&9
-&0|||&0
-&b|||&b
-&c|||&c
-&d|||&d
-&e|||&e
-&f|||&f
 boss|||boss
 industrial foregoing|||工业先锋
 waystone|||传送石碑
