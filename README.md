@@ -11,7 +11,8 @@
 1. 复制粘贴`config_example.py`并将新文件重命名为`config.py`，配置`APPID`和`APPKEY`
 2. 将ftbquest文件夹放到程序同级目录下运行程序
 
-为了获取更好的翻译效果，建议先在百度翻译api中扩充自己的术语库(原版术语可以参考：https://github.com/CFPAOrg/Glossary)
+为了获取更好的翻译效果，建议先在百度翻译api中扩充自己的术语库
+(原版术语可以参考：https://github.com/CFPAOrg/Glossary)
 
 
 PS:
