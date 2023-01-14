@@ -98,9 +98,9 @@ def update_quest(quest: str, text_fields: Tuple[str]) -> str:
             ##情景3：物品引用
             # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
             # 这里给出的方案是先将引用替换为临时词‘xdawned’，术语库中设置xdawned-xdawned来保留此关键词，然后借此在翻译后的句子中定位xdawned用先前引用词换回
-                translate= translate_line(re.sub(r'#([^[\n|\|\s"]*)', 'xdawned' , colored_line))
+                translate= translate_line(re.sub(r'#([^[\n|\|\s"]*)', 'xdawned' , re.sub(r'\\"', '\"',colored_line)))#辅助忽略转义符
             else:
-                translate= translate_line(re.sub(r'#([^[\n|\|\s"]*)', 'xdawned' , line))
+                translate= translate_line(re.sub(r'#([^[\n|\|\s"]*)', 'xdawned' , re.sub(r'\\"', '\"',line)))#辅助忽略转义符
 
             #将物品引用换回
             quotes=re.findall(r'#([^[\n|\|\s"]*)', line)#找出所有引用词
