@@ -14,6 +14,8 @@
 为了获取更好的翻译效果，建议先在百度翻译api中扩充自己的术语库
 (原版术语可以参考：https://github.com/CFPAOrg/Glossary)
 
+效果：
+![image](https://img2023.cnblogs.com/blog/2192803/202301/2192803-20230107125912964-39430206.png)
 
 PS:
 
