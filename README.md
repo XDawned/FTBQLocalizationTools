@@ -1,4 +1,5 @@
 # ftbquestsAutoTrans
+[English README](README.en.md)
 
 介绍:
 
