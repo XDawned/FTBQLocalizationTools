@@ -5,7 +5,7 @@
 
 你可以用它:
 1. 使用百度API翻译ftbquests任务 
-2. 生成lang文件，辅助任务汉化工作（如果你想获取你可以先翻译再将机翻后任务生成lang文件）
+2. 生成lang文件，辅助任务汉化工作（如果你想获取机翻后的lang，你可以先机翻再使用机翻后任务生成lang文件）
 ### 使用:
 
  1. 复制粘贴`config_example.py`并将新文件重命名为`config.py`，配置`APPID`、`APPKEY`、以及`WORK_PATH`
