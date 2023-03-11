@@ -1,3 +1,5 @@
+import sys
+
 from config import *
 from pathlib import Path
 import re
@@ -16,22 +18,27 @@ def get_quest(input_path: Path) -> str:
             sys.exit(0)
 
 
-def all2line(text: list) -> str:
+def get_value(prefix: str, text):
     """
-    处理传来的文本：单行不处理，多行list则插换行符转为一行
+    为key赋予value（多行与图片)
     :param text:文本
-    :return:单行文本
+    :param prefix:键名前缀
+    :return 键文dict和处理为键值后的text
     """
+    key_value = {}  # 用于存放新生成的键值及其对应的文本
     if isinstance(text, list):
-        res = ''
-        for line in text:
-            if bool(re.search(r'\S', line)):  # 匹配到空行则插入换行
-                res += line
-            else:
-                res += '\n'
-        return res
+        for i in range(0, len(text)):
+            if bool(re.search(r'\S', text[i])):  # 非空行，为此行生成键值
+                if text[i].find('{image:') == -1:  # 非图片
+                    local_key = prefix + '.' + str(i)
+                    key_value[local_key] = text[i]
+                    text[i] = '{' + local_key + '}'
+        return text, key_value
     else:
-        return text
+        if text.find('{image:') == -1:  # 非图片
+            key_value[prefix] = text
+            text = '{' + prefix + '}'
+        return text, key_value
 
 
 def make_output_path(path: Path) -> Path:
@@ -59,10 +66,10 @@ def trans2lang():
         if quest.get('chapter_groups'):
             chapter_groups = quest['chapter_groups']
             for i in range(0, len(chapter_groups)):
-                local_key = 'ftbquest.chapter_groups.' + prefix + str(i) + '.title'
-                text = all2line(chapter_groups[i]['title'])
-                key_value[local_key] = text
-                quest['chapter_groups'][i]['title'] = '{' + local_key + '}'
+                local_key = 'ftbquests.chapter_groups.' + prefix + '.' + str(i) + '.title'
+                text, new_key_value = get_value(local_key, chapter_groups[i]['title'])
+                key_value.update(new_key_value)
+                quest['chapter_groups'][i]['title'] = text
             # 写入更新后的quest
             with open(output_path, 'w', encoding="utf-8") as fout:
                 print("************", output_path, "snbt替换结束************")
@@ -72,10 +79,10 @@ def trans2lang():
         # loot_table[title]
         if quest.get('loot_size'):  # 仅以键值判断是否是loot_table内容
             title = quest['title']
-            local_key = 'ftbquest.loot_table.' + prefix + '.title'
-            text = all2line(quest['title'])
-            key_value[local_key] = text
-            quest['title'] = '{' + local_key + '}'
+            local_key = 'ftbquests.loot_table.' + prefix + '.title'
+            text, new_key_value = get_value(local_key, quest['title'])
+            key_value.update(new_key_value)
+            quest['title'] = text
             # 写入更新后的quest
             with open(output_path, 'w', encoding="utf-8") as fout:
                 print("************", output_path, "snbt替换结束************")
@@ -85,17 +92,17 @@ def trans2lang():
         # chapter[title,subtitle]
         if quest.get('title'):
             title = quest['title']
-            local_key = 'ftbquest.chapter.' + prefix + '.title'
-            text = all2line(quest['title'])
-            key_value[local_key] = text
-            quest['title'] =  '{' + local_key + '}'
+            local_key = 'ftbquests.chapter.' + prefix + '.title'
+            text, new_key_value = get_value(local_key, quest['title'])
+            key_value.update(new_key_value)
+            quest['title'] = text
         if quest.get('subtitle'):
             subtitle = quest['subtitle']
             if len(subtitle) > 0:
-                local_key = 'ftbquest.chapter.' + prefix + '.subtitle'
-                text = all2line(quest['subtitle'])
-                key_value[local_key] = text
-                quest['subtitle'] = '{' + local_key + '}'
+                local_key = 'ftbquests.chapter.' + prefix + '.subtitle'
+                text, new_key_value = get_value(local_key, quest['subtitle'])
+                key_value.update(new_key_value)
+                quest['subtitle'] = text
 
         # chapter.images[i][hover]
         if quest.get('images'):
@@ -104,10 +111,10 @@ def trans2lang():
                 if images[i].get('hover'):
                     hover = images[i]['hover']
                     if len(hover) > 0:
-                        local_key = 'ftbquest.chapter.' + prefix + '.images.' + str(i) + '.hover'
-                        text = all2line(hover)
-                        key_value[local_key] = text
-                        quest['images'][i]['hover'] = '{' + local_key + '}'
+                        local_key = 'ftbquests.chapter.' + prefix + '.images.' + str(i) + '.hover'
+                        text, new_key_value = get_value(local_key, hover)
+                        key_value.update(new_key_value)
+                        quest['images'][i]['hover'] = text
 
         # chapter.quests[i][title,subtitle,description]
         # chapter.quests[i].tasks[j].title
@@ -119,26 +126,26 @@ def trans2lang():
                 if quests[i].get('title'):
                     title = quests[i]['title']
                     if len(title) > 0:
-                        local_key = 'ftbquest.chapter.' + prefix + '.quests.' + str(i) + '.title'
-                        text = all2line(title)
-                        key_value[local_key] = text
-                        quest['quests'][i]['title'] = '{' + local_key + '}'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.title'
+                        text, new_key_value = get_value(local_key, title)
+                        key_value.update(new_key_value)
+                        quest['quests'][i]['title'] = text
                 # subtitle
                 if quests[i].get('subtitle'):
                     subtitle = quests[i]['subtitle']
                     if len(subtitle) > 0:
-                        local_key = 'ftbquest.chapter.' + prefix + '.quests.' + str(i) + '.subtitle'
-                        text = all2line(subtitle)
-                        key_value[local_key] = text
-                        quest['quests'][i]['subtitle'] = '{' + local_key + '}'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.subtitle'
+                        text, new_key_value = get_value(local_key, subtitle)
+                        key_value.update(new_key_value)
+                        quest['quests'][i]['subtitle'] = text
                 # description
                 if quests[i].get('description'):
                     description = quests[i]['description']
                     if len(description) > 0:
-                        local_key = 'ftbquest.chapter.' + prefix + '.quests.' + str(i) + '.description'
-                        text = all2line(description)
-                        key_value[local_key] = text
-                        quest['quests'][i]['description'] = '{' + local_key + '}'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.description'
+                        text, new_key_value = get_value(local_key, description)
+                        key_value.update(new_key_value)
+                        quest['quests'][i]['description'] = text
                         
                 # tasks[j].title
                 if quests[i].get('tasks'):
@@ -147,10 +154,10 @@ def trans2lang():
                         for j in range(0, len(tasks)):
                             if tasks[j].get('title'):
                                 title = tasks[j]['title']
-                                local_key = 'ftbquest.chapter.' + prefix + '.quests.' + str(i) + '.tasks.' + str(j) + '.title'
-                                text = all2line(title)
-                                key_value[local_key] = text
-                                quest['quests'][i]['tasks'][j]['title'] = '{' + local_key + '}'
+                                local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.tasks.' + str(j) + '.title'
+                                text, new_key_value = get_value(local_key, title)
+                                key_value.update(new_key_value)
+                                quest['quests'][i]['tasks'][j]['title'] = text
 
                 # rewards[j].title
                 if quests[i].get('rewards'):
@@ -159,10 +166,10 @@ def trans2lang():
                         for j in range(0, len(rewards)):
                             if rewards[j].get('title'):
                                 title = rewards[j]['title']
-                                local_key = 'ftbquest.chapter.' + prefix + '.quests.' + str(i) + '.rewards.' + str(j) + '.title'
-                                text = all2line(title)
-                                key_value[local_key] = text
-                                quest['quests'][i]['rewards'][j]['title'] = '{' + local_key + '}'
+                                local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.rewards.' + str(j) + '.title'
+                                text, new_key_value = get_value(local_key, title)
+                                key_value.update(new_key_value)
+                                quest['quests'][i]['rewards'][j]['title'] = text
         # 写入更新后的quest
         with open(output_path, 'w', encoding="utf-8") as fout:
             print("************", output_path, "snbt替换结束************")
@@ -171,7 +178,7 @@ def trans2lang():
     with open('./zh_cn.json', 'w', encoding="utf-8") as fout:
         fout.write(json.dumps(key_value, indent=1, ensure_ascii=False))
         print("************json生成结束************")
-        print("键值生成格式为【ftbquest.任务部分.任务原文件名称.区域.区域序号(从0开始).子区域.子区域序号(从0开始)】")
+        print("键值生成格式为【ftbquests.任务部分.任务原文件名称.区域.区域序号(从0开始).n*子区域.子区域序号(从0开始).行号(单行则无)")
         print("关于如何使用此文件有两种形式:")
         print("1.制作成resourcepack下资源包，可以参考https://www.mcmod.cn/post/2194.html")
         print("2.制作成kubejs下资源包(依赖kubejs)，"
