@@ -13,15 +13,15 @@ if __name__ == '__main__':
                 print('选择翻译解析器\n1.snbtlib(推荐)\n2.正则表达式(稳定，但易漏翻)\n3.退出')
                 choice = input('请输入你要选择的解析器：')
                 if choice == '1':
-                    snbtlib_trans()
+                    func.snbtlib_trans()
                 elif choice == '2':
-                    regular_trans()
+                    func.regular_trans()
                 elif choice == '3':
                     break
                 else:
                     print('无效输入')
         elif choice == '2':
-            trans2lang()
+            func.trans2lang()
         elif choice == '3':
             with open('config.py', 'w', encoding="utf-8") as fout:
                 appId = input('APPID：')
