@@ -1,4 +1,4 @@
-from func import *
+import func 
 
 
 if __name__ == '__main__':
