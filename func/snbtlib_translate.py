@@ -52,14 +52,14 @@ def update_quest_file(input_path: Path, output_path: Path) -> None:
     """
     更新文件，将处理完的文本写回
     :param input_path:输入目录
-    :param output_path:输输出目录
+    :param output_path:输出目录
     :return:无
     """
     print('正在处理:', input_path)
     quest = get_quest(input_path)
     quest = update_quest(quest)  # 翻译相应内容
     with open(output_path, 'w', encoding="utf-8") as fout:
-        print('翻译后1:\n', snbtlib.dumps(quest))
+        print('翻译后\n', snbtlib.dumps(quest))
         fout.write(snbtlib.dumps(quest))
 
 
@@ -74,7 +74,7 @@ def get_quest(input_path: Path) -> str:
 
 
 def snbtlib_trans():
-    quest_path = Path(WORK_PATH)  # 要翻译的目录
+    quest_path = Path(QUESTS_PATH)  # 要翻译的目录
     for input_path in quest_path.rglob("*.snbt"):
         output_path = make_output_path(input_path)  # 生成输出目录路径
         update_quest_file(input_path, output_path)  # 更新任务文件

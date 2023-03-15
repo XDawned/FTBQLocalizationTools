@@ -17,4 +17,6 @@
 ### Tips
 1. 为了获取更好的翻译效果，建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
-2. 如果你有更好的思路或者发现了某些bug，欢迎在此pr！
+2. 脚本使用了[snbtlib](https://github.com/Tryanks/python-snbtlib)，如果提示缺少此库你可以尝试`pip install snbtlib`
+
+3. 如果你有更好的思路或者发现了某些bug，欢迎在此pr！

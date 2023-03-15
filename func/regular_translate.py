@@ -79,7 +79,7 @@ def make_output_path(path: Path) -> Path:
 
 
 def regular_trans():
-    quest_path = Path(WORK_PATH)  # 要翻译的目录
+    quest_path = Path(QUESTS_PATH)  # 要翻译的目录
     for input_path in quest_path.rglob("*.snbt"):
         output_path = make_output_path(input_path)  # 生成输出目录路径
         update_quest_file(input_path, output_path)  # 更新任务文件

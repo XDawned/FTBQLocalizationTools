@@ -4,7 +4,7 @@ import func
 if __name__ == '__main__':
     while True:
         print('********************')
-        print('主功能引导\n1.翻译任务snbt\n2.生成lang文件(默认位置config中WORK_PATH)\n3.生成配置文件\n4.退出')
+        print('主功能引导\n1.翻译任务snbt\n2.生成lang文件(默认位置config中WORK_PATH)\n3.翻译lang文件\n4.生成配置文件\n5.退出')
         choice = input('请输入你要选择的功能：')
         if choice == '1':
             print('开始翻译，请确保你已提前完成配置！')
@@ -23,15 +23,17 @@ if __name__ == '__main__':
         elif choice == '2':
             func.trans2lang()
         elif choice == '3':
+            func.lang_trans()
+        elif choice == '4':
             with open('config.py', 'w', encoding="utf-8") as fout:
                 appId = input('APPID：')
                 appKey = input('APPKEY：')
                 workPath = input('翻译目录(比如相对路径./ftbquests或绝对路径*/ftbquests)：')
                 fout.write('APPID = %s' % appId)
                 fout.write('\nAPPKEY = %s' % appKey)
-                fout.write('\nWORK_PATH = %s' % workPath)
+                fout.write('\nQUESTS_PATH = %s' % workPath)
             print('配置已生成！')
-        elif choice == '4':
+        elif choice == '5':
             break
         else:
             print('无效输入')

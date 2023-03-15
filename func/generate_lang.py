@@ -55,7 +55,7 @@ def make_output_path(path: Path) -> Path:
 
 
 def trans2lang():
-    quest_path = Path(WORK_PATH)  # 要翻译的目录
+    quest_path = Path(QUESTS_PATH)  # 要翻译的目录
     key_value = {}  # 用于存放新生成的键值及其对应的文本
 
     for input_path in quest_path.rglob("*.snbt"):
@@ -178,7 +178,7 @@ def trans2lang():
     with open('./zh_cn.json', 'w', encoding="utf-8") as fout:
         fout.write(json.dumps(key_value, indent=1, ensure_ascii=False))
         print("************json生成结束************")
-        print("键值生成格式为【ftbquests.任务部分.任务原文件名称.区域.区域序号(从0开始).n*子区域.子区域序号(从0开始).行号(单行则无)")
+        print("键值生成格式为【ftbquests.任务部分.任务原文件名称.区域.区域序号(从0开始).n*子区域.子区域序号(从0开始).行号(单行则无)】")
         print("关于如何使用此文件有两种形式:")
         print("1.制作成resourcepack下资源包，可以参考https://www.mcmod.cn/post/2194.html")
         print("2.制作成kubejs下资源包(依赖kubejs)，"
