@@ -23,7 +23,7 @@ def get_value(prefix: str, text):
     为key赋予value（多行与图片)
     :param text:文本
     :param prefix:键名前缀
-    :return 键文dict和处理为键值后的text
+    :return 键文dict和处理为键值后的原文
     """
     key_value = {}  # 用于存放新生成的键值及其对应的文本
     if isinstance(text, list):
@@ -117,7 +117,7 @@ def trans2lang():
                         quest['images'][i]['hover'] = text
 
         # chapter.quests[i][title,subtitle,description]
-        # chapter.quests[i].tasks[j].title
+        # chapter.quests[i].tasks[j].[title,description]
         # chapter.quests[i].rewards[j].title
         if quest.get('quests'):
             quests = quest['quests']
@@ -158,6 +158,18 @@ def trans2lang():
                                 text, new_key_value = get_value(local_key, title)
                                 key_value.update(new_key_value)
                                 quest['quests'][i]['tasks'][j]['title'] = text
+
+                # tasks[j].description
+                if quests[i].get('tasks'):
+                    tasks = quests[i]['tasks']
+                    if len(tasks) > 0:
+                        for j in range(0, len(tasks)):
+                            if tasks[j].get('description'):
+                                description = tasks[j]['description']
+                                local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.tasks.' + str(j) + '.description'
+                                text, new_key_value = get_value(local_key, description)
+                                key_value.update(new_key_value)
+                                quest['quests'][i]['tasks'][j]['description'] = text
 
                 # rewards[j].title
                 if quests[i].get('rewards'):
