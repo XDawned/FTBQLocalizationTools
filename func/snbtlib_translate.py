@@ -15,11 +15,14 @@ def trans_field(quest: dict) -> dict:
                 line_list = quest[key]
                 for index in range(0, len(line_list)):
                     if bool(re.search('[a-zA-Z]', line_list[index])):  # 忽略无字母的无效行
-                        line_list[index] = pre_process(line_list[index])
-                        translate = translate_line(line_list[index])
-                        replacement = post_process(line_list[index], translate)
-                        print("替换中：" + replacement)
-                        line_list[index] = replacement
+                        pre_line = pre_process(line_list[index])
+                        if pre_line is not None:  # 空返回为图片，保留，不处理
+                            translate = translate_line(pre_line)
+                            replacement = post_process(pre_line, translate)
+                            print("替换中：" + replacement)
+                            line_list[index] = replacement
+                        else:
+                            print('找到图片', line_list[index], '已保留')
                 quest.update({key: line_list})  # 更新dict中文本
             else:  # 单行文本
                 text = pre_process(quest[key])
