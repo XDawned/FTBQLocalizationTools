@@ -14,9 +14,15 @@
 ### 效果：
 ![image](https://img2023.cnblogs.com/blog/2192803/202301/2192803-20230107125912964-39430206.png)
 
+### 未来的计划
+1.翻译接口对接chatgpt（它在翻译效果上可以说很出色，大多数mc专业术语都可以识别保留）
+
+2.未来可能会找个预训练模型，尝试自己针对mc进行调教。
+
 ### Tips
 1. 为了获取更好的翻译效果，建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
 2. 脚本使用了[snbtlib](https://github.com/Tryanks/python-snbtlib)，如果提示缺少此库你可以尝试`pip install snbtlib`
 
 3. 如果你有更好的思路或者发现了某些bug，欢迎在此pr！
+
