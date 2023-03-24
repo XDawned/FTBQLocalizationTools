@@ -35,12 +35,13 @@ def update_quest(quest: str, text_fields: Tuple[str]) -> str:
     :return:汉化后任务
     """
     for line in text_fields:
-        pre_processed_line = pre_process(line)
-        translate = translate_line(pre_processed_line)
-        replacement = post_process(line, translate)
-        print("替换中：" + replacement)
-        quest = quest.replace('\"' + line + '\"',
-                              '\"' + replacement + '\"')  # 用双引号卡一下因为多处文本可能相同，防止重复替换替换到其它位置；处理过的就为 "原文[--*--]" 不再参与替换
+        if bool(re.search('[a-zA-Z]', line)):  # 忽略无字母的无效行
+            pre_processed_line = pre_process(line)
+            translate = translate_line(pre_processed_line)
+            replacement = post_process(line, translate)
+            print("替换中：" + replacement)
+            quest = quest.replace('\"' + line + '\"',
+                                  '\"' + replacement + '\"')  # 用双引号卡一下因为多处文本可能相同，防止重复替换替换到其它位置；处理过的就为 "原文[--*--]" 不再参与替换
     return quest
 
 
