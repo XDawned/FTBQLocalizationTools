@@ -4,7 +4,7 @@
 一个辅助翻译ftbquests任务的python脚本
 
 你可以用它:
-1. 使用百度API或我托关于hugging-face平台的自训练模型机翻ftbquests任务 
+1. 使用百度API或我托管于hugging-face平台的自训练模型机翻ftbquests任务 
 2. 生成lang文件，辅助任务汉化工作（如果你想获取机翻后的lang，你可以先机翻再使用机翻后任务生成lang文件）
 ### 使用:
 
