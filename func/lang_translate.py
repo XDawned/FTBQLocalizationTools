@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from func.base import *
 
 from config import *
@@ -45,6 +44,7 @@ def update_quest(quest: dict) -> dict:
         quest[key] = replacement
     return quest
 
+
 def make_output_path(path: Path) -> Path:
     """
     生成输出目录，为原文件夹+trans
@@ -65,4 +65,3 @@ def lang_trans():
     update_quest_file(input_path, output_path)  # 更新任务文件
     print("你可以在en_us同级目录下的trans文件夹中找到翻译后的lang文件zh_cn.json.")
     print("************lang文件翻译完成************")
-
