@@ -1,7 +1,4 @@
-import json
 from func.base import *
-
-from config import *
 
 
 def get_lang(input_path: Path) -> dict:
@@ -43,6 +40,8 @@ def make_output_path(path: Path) -> Path:
 
 
 def lang_trans():
+    get_config()
+    LANG_PATH = global_var.get_value('LANG_PATH')
     input_path = Path(LANG_PATH)  # 要翻译的目录
     output_path = make_output_path(input_path)  # 生成输出目录路径
     update_lang_file(input_path, output_path)  # 更新任务文件

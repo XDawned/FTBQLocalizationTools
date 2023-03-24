@@ -62,7 +62,7 @@ def update_quest_file(input_path: Path, output_path: Path) -> None:
     quest = get_quest(input_path)
     quest = update_quest(quest)  # 翻译相应内容
     with open(output_path, 'w', encoding="utf-8") as fout:
-        print('翻译后\n', snbtlib.dumps(quest))
+        # print('翻译后\n', snbtlib.dumps(quest))
         fout.write(snbtlib.dumps(quest))
 
 
@@ -77,6 +77,8 @@ def get_quest(input_path: Path) -> str:
 
 
 def snbtlib_trans():
+    get_config()
+    QUESTS_PATH = global_var.get_value('QUESTS_PATH')
     quest_path = Path(QUESTS_PATH)  # 要翻译的目录
     for input_path in quest_path.rglob("*.snbt"):
         output_path = make_output_path(input_path)  # 生成输出目录路径

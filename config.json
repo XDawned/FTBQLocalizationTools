@@ -1,0 +1,8 @@
+{
+  "APPID" : "2***************3",
+  "APPKEY" : "L***************X",
+  "HUGGING_FACE_TOKEN": "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",
+  "QUESTS_PATH" : "./ftbquests",
+  "LANG_PATH" : "./en_us.json",
+  "MODEL" : "transformer"
+}

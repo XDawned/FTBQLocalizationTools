@@ -1,6 +1,5 @@
 import sys
-
-from config import *
+from func.base import *
 from pathlib import Path
 import re
 import snbtlib
@@ -55,6 +54,8 @@ def make_output_path(path: Path) -> Path:
 
 
 def trans2lang():
+    get_config()
+    QUESTS_PATH = global_var.get_value('QUESTS_PATH')
     quest_path = Path(QUESTS_PATH)  # 要翻译的目录
     key_value = {}  # 用于存放新生成的键值及其对应的文本
 

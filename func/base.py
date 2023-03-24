@@ -3,10 +3,22 @@ from hashlib import md5
 from pathlib import Path
 import random
 import requests
-from config import *
+import global_var
 import re
+import json
 
 MAGIC_WORD = r'{xdawned}'
+
+
+def get_config():
+    with open('config.json', 'r', encoding="utf-8") as fin:
+        config_data = json.loads(fin.read())
+        global_var.set_value('APPID', config_data['APPID'])
+        global_var.set_value('APPKEY', config_data['APPKEY'])
+        global_var.set_value('HUGGING_FACE_TOKEN',config_data['HUGGING_FACE_TOKEN'])
+        global_var.set_value('QUESTS_PATH', config_data['QUESTS_PATH'])
+        global_var.set_value('LANG_PATH', config_data['LANG_PATH'])
+        global_var.set_value('MODEL', config_data['MODEL'])
 
 
 def make_output_path(path: Path) -> Path:
@@ -28,6 +40,10 @@ def translate_line(line: str) -> str:
     :param line:字符串
     :return:翻译结果字符串
     """
+    MODEL = global_var.get_value('MODEL')
+    APPID = global_var.get_value('APPID')
+    APPKEY = global_var.get_value('APPKEY')
+    HUGGING_FACE_TOKEN = global_var.get_value('HUGGING_FACE_TOKEN')
     if MODEL == 'transformer':
         try:
             API_URL = "https://api-inference.huggingface.co/models/XDawned/minecraft-modpack-quests-transformer"
@@ -97,6 +113,7 @@ def debracket(m: re.Match):
 
 
 def pre_process(line: str):
+    MODEL = global_var.get_value('MODEL')
     # 情景1：图片介绍
     if line.find('.jpg') + line.find('.png') != -2:
         return None  # 新版ftbquest可以展示图片，遇到图片则略过
@@ -117,6 +134,7 @@ def pre_process(line: str):
 
 
 def post_process(line, translate):
+    MODEL = global_var.get_value('MODEL')
     # 将方括号替换回来
     pattern = re.compile(r'\[&&([a-z,0-9]|#[0-9,A-F]{6})\]')
     if MODEL == 'baidu':

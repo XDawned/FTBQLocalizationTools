@@ -80,6 +80,8 @@ def make_output_path(path: Path) -> Path:
 
 
 def regular_trans():
+    get_config()
+    QUESTS_PATH = global_var.get_value('QUESTS_PATH')
     quest_path = Path(QUESTS_PATH)  # 要翻译的目录
     for input_path in quest_path.rglob("*.snbt"):
         output_path = make_output_path(input_path)  # 生成输出目录路径
