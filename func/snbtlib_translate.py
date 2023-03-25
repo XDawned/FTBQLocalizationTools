@@ -48,6 +48,15 @@ def update_quest(quest: dict) -> dict:
             for index in range(0, len(quests)):
                 quests[index] = trans_field(quests[index])
             quest.update({child: quests})  # 覆盖
+    if quest.get('quests'):
+        quests_child = ['tasks']    # 任务中子节点quests下还可能存在更细一层的子任务tasks
+        for child in quests_child:
+            for i in range(0, len(quest['quests'])):    # quests可能有多个
+                if quest['quests'][i].get(child):
+                    tasks = quest['quests'][i][child]
+                    for index in range(0, len(tasks)):    # tasks可能有多个
+                        tasks[index] = trans_field(tasks[index])
+                    quest['quests'][i].update({child: tasks})  # 覆盖原先quests下tasks
     return quest
 
 
