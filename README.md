@@ -9,9 +9,9 @@
 ### 使用:
 
  1. 打开config.json，配置各项参数
-    - `APPID`  百度api-appid(模型不选用百度api可随意修改)
-    - `APPKEY` 百度api-appkey(模型不选用百度api可随意修改)
-    - `HUGGING_FACE_TOKEN` huggingface平台注册账号后免费获取 [获取token](https://huggingface.co/settings/tokens)
+    - `[APPID]`  百度api-appid(模型不选用百度api可随意修改)
+    - `[APPKEY]` 百度api-appkey(模型不选用百度api可随意修改)
+    - `[HUGGING_FACE_TOKEN]` (模型不选用Hugging-Face api可随意修改) [获取token](https://huggingface.co/settings/tokens)
     - `QUESTS_PATH` 要翻译或生成lang的文件目录，此目录下所有snbt文件都会被翻译#
     【可选./ftbquests或./chapter，./chapter只翻译章节内容，./ftbquests额外包括战利品表名称、大章节标题等内容】
     - `LANG_PATH` 要翻译的lang中json文件相对目录，默认为程序运行目录下的en_us.json
