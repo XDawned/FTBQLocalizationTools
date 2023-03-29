@@ -21,8 +21,6 @@ def trans_field(quest: dict) -> dict:
                             replacement = post_process(pre_line, translate)
                             print("替换中：" + replacement)
                             line_list[index] = replacement
-                        else:
-                            print('找到图片', line_list[index], '已保留')
                 quest.update({key: line_list})  # 更新dict中文本
             else:  # 单行文本
                 text = pre_process(quest[key])
