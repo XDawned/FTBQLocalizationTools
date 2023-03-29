@@ -116,6 +116,7 @@ def pre_process(line: str):
     MODEL = global_var.get_value('MODEL')
     # 情景1：图片介绍
     if line.find('.jpg') + line.find('.png') != -2:
+        print('检测到图片', line, '已保留')
         return None  # 新版ftbquest可以展示图片，遇到图片则略过
     # 情景2：\\&表and
     line = line.replace('\\\\&', 'PPP')
@@ -129,6 +130,11 @@ def pre_process(line: str):
     # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
     # 这里给出的方案是先将引用替换为临时词MAGIC_WORD，术语库中设置MAGIC_WORD-MAGIC_WORD来保留此关键词，然后借此在翻译后的句子中定位MAGIC_WORD用先前引用词换回
     line = re.sub(r'#\w+:\w+\b', MAGIC_WORD, re.sub(r'\\"', '\"', line))  # 辅助忽略转义符
+    # 情景5：超链接
+    pattern = re.compile(r'(http|https)://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
+    if re.search(pattern, line):
+        print('检测到超链接', line, '已保留')
+        return None  # 某行包含超链接，保险策略，直接略过此行
 
     return line
 
