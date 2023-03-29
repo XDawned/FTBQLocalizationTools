@@ -15,7 +15,7 @@
     - `QUESTS_PATH` 要翻译或生成lang的文件目录，此目录下所有snbt文件都会被翻译#
     【可选./ftbquests或./chapter，./chapter只翻译章节内容，./ftbquests额外包括战利品表名称、大章节标题等内容】
     - `LANG_PATH` 要翻译的lang中json文件相对目录，默认为程序运行目录下的en_us.json
-    - `MODEL` 可选值baidu、transformer分别对应百度翻译API(额度内免费)和托管于hugging-face平台的自训练模型(免费但不稳定)
+    - `MODEL` 可选值baidu、transformer分别对应百度翻译API(额度内免费)和托管于hugging-face平台的自训练模型(免费但速率有限制，后续会支持本地CPU运行模型)
     [自训练模型介绍](https://github.com/XDawned/minecraft-modpack-quests-transformer)
  2. 将任务文件或语言文件放到指定位置(比如默认配置`QUESTS_PATH`为`./ftbquests`，即将从.minecraft/config下获取的ftbquests目录复制到程序同级目录下)
  3. 运行exe程序，选择相应功能
@@ -24,6 +24,7 @@
 
 ### 可能遇到的问题
  1. 闪退，大概率为配置文件不正确或异常操作
+ 2. hugging-face API调用出错，网络环境不佳或者达到了速率限制
 
 ### 未来的计划
 1.翻译接口对接chatgpt（它在翻译效果上可以说很出色，大多数mc专业术语都可以识别保留）
