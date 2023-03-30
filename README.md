@@ -18,7 +18,7 @@
     - `MODEL` 可选值baidu、transformer分别对应百度翻译API(额度内免费)和托管于hugging-face平台的自训练模型(免费但速率有限制，后续会支持本地CPU运行模型)
     [自训练模型介绍](https://github.com/XDawned/minecraft-modpack-quests-transformer)
  2. 将任务文件或语言文件放到指定位置(比如默认配置`QUESTS_PATH`为`./ftbquests`，即将从.minecraft/config下获取的ftbquests目录复制到程序同级目录下)
- 3. 运行exe程序，选择相应功能
+ 3. 运行程序，选择相应功能
 ### 效果：
 ![image](https://img2023.cnblogs.com/blog/2192803/202301/2192803-20230107125912964-39430206.png)
 
@@ -32,9 +32,11 @@
 2.模型优化
 
 ### Tips
-1. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
+1. 如果你不想使用联网API可以选择branch中的model_trans分支，使用本地机翻模型版本
 
-2. 脚本使用了[snbtlib](https://github.com/Tryanks/python-snbtlib)，如果提示缺少此库你可以尝试`pip install snbtlib`
+2. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
-3. 如果你有更好的思路或者发现了某些bug，欢迎在此pr！
+3. 脚本使用了[snbtlib](https://github.com/Tryanks/python-snbtlib)，如果提示缺少此库你可以尝试`pip install snbtlib`
+
+4. 如果你有更好的思路或者发现了某些bug，欢迎在此pr！
 
