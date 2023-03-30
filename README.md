@@ -14,7 +14,7 @@
     可选`./ftbquests`或`./chapter`，`./chapter`只翻译章节内容，`./ftbquests`额外包括战利品表名称、大章节标题等内容
     - `LANG_PATH` 要翻译的lang中json文件相对目录，默认为程序运行目录下的`en_us.json`
     - `DEVICE` 运行模型所使用的硬件，可选值`CPU`、`GPU`（GPU运行对环境要求更高，需要进行额外的配置）
- 2. 下载并打开项目，安装依赖环境(如编辑器无法自动安装请手动`pip install`，建议采用conda环境)
+ 2. 下载并打开项目，安装依赖环境(首次翻译会自动下载模型300M左右，请耐心等待)
  3. 将任务文件或语言文件放到指定位置(比如默认配置`QUESTS_PATH`为`./ftbquests`，即将从.minecraft/config下获取的ftbquests目录复制到程序同级目录下)
 ### 效果：
 ![image](https://img2023.cnblogs.com/blog/2192803/202301/2192803-20230107125912964-39430206.png)

@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import re
-from transformers import MarianTokenizer, MarianMTModel
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import json
 import global_var
 
@@ -39,12 +39,13 @@ def translate_line(line: str) -> str:
     try:
         get_config()
         DEVICE = global_var.get_value('DEVICE')
-        tokenizer = MarianTokenizer.from_pretrained("minecraft-modpack-quests-transformer")
+        tokenizer = AutoTokenizer.from_pretrained("XDawned/minecraft-modpack-quests-transformer")
+
         if DEVICE == 'GPU':
-            model = MarianMTModel.from_pretrained("minecraft-modpack-quests-transformer").to('cuda')
+            model = AutoModelForSeq2SeqLM.from_pretrained("XDawned/minecraft-modpack-quests-transformer").to('cuda')
             input_ids = tokenizer.encode(line, return_tensors="pt").to('cuda')
         elif DEVICE == 'CPU':
-            model = MarianMTModel.from_pretrained("minecraft-modpack-quests-transformer")
+            model = AutoModelForSeq2SeqLM.from_pretrained("XDawned/minecraft-modpack-quests-transformer")
             input_ids = tokenizer.encode(line, return_tensors="pt")
         else:
             print('模型配置选择有误！')
