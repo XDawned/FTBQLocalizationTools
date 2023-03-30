@@ -28,15 +28,12 @@ if __name__ == '__main__':
             func.lang_trans()
         elif choice == '4':
             with open('config.json', 'w', encoding="utf-8") as fout:
-                APPID = input('百度APPID(不使用则随意填写)')
-                APPKEY = input('百度APPKEY(不使用则随意填写)')
-                HUGGING_FACE_TOKEN = input('可选值baidu、transformer分别对应百度翻译API(额度内免费)和托管于hugging-face平台的自训练模型(免费但不稳定)')
                 QUESTS_PATH = input('翻译目录(比如相对路径./ftbquests或绝对路径*/ftbquests)')
                 LANG_PATH = input('要翻译的lang中json文件相对目录，默认为程序运行目录下的en_us.json')
-                MODEL = input('可选值baidu、transformer分别对应百度翻译API和本地翻译')
+                DEVICE = input('可选值CPU,GPU')
                 fout.write(json.dumps(
-                    {'APPID': APPID, 'APPKEY': APPKEY, 'HUGGING_FACE_TOKEN': HUGGING_FACE_TOKEN, 'QUESTS_PATH': QUESTS_PATH, 'LANG_PATH': LANG_PATH,
-                     'MODEL': MODEL}, indent=1, ensure_ascii=False))
+                    {'QUESTS_PATH': QUESTS_PATH, 'LANG_PATH': LANG_PATH,
+                     'DEVICE': DEVICE}, indent=1, ensure_ascii=False))
             print('配置修改完成！')
         elif choice == '5':
             break
