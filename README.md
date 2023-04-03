@@ -15,7 +15,8 @@
     - `QUESTS_PATH` 要翻译或生成lang的文件目录，此目录下所有snbt文件都会被翻译#
     【可选./ftbquests或./chapter，./chapter只翻译章节内容，./ftbquests额外包括战利品表名称、大章节标题等内容】
     - `LANG_PATH` 要翻译的lang中json文件相对目录，默认为程序运行目录下的en_us.json
-    - `MODEL` 可选值baidu、transformer分别对应百度翻译API(额度内免费)和托管于hugging-face平台的自训练模型(免费但速率有限制，你在此项目分支model_trans中找到支持本地CPU或GPU运行翻译模型的版本[model_trans](https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans))
+    - `MODEL` 可选值baidu、transformer分别对应百度翻译API(额度内免费)和托管于hugging-face平台的自训练模型(免费但速率有限制）
+    - 如果你有一定的代码基础建议采用此项目分支model_trans，其支持本地CPU或GPU运行翻译模型[model_trans](https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans))
  2. 将任务文件或语言文件放到指定位置(比如默认配置`QUESTS_PATH`为`./ftbquests`，即将从.minecraft/config下获取的ftbquests目录复制到程序同级目录下)
  3. 运行程序，选择相应功能
 ### 效果：
