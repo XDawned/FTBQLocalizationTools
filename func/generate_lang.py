@@ -1,5 +1,5 @@
-import sys
 from func.base import *
+from global_var import *
 from pathlib import Path
 import re
 import snbtlib
@@ -79,7 +79,6 @@ def trans2lang():
 
         # loot_table[title]
         if quest.get('loot_size'):  # 仅以键值判断是否是loot_table内容
-            title = quest['title']
             local_key = 'ftbquests.loot_table.' + prefix + '.title'
             text, new_key_value = get_value(local_key, quest['title'])
             key_value.update(new_key_value)
@@ -90,9 +89,8 @@ def trans2lang():
                 fout.write(snbtlib.dumps(quest))
             continue
 
-        # chapter[title,subtitle]
+        # chapter[title,subtitle,text]
         if quest.get('title'):
-            title = quest['title']
             local_key = 'ftbquests.chapter.' + prefix + '.title'
             text, new_key_value = get_value(local_key, quest['title'])
             key_value.update(new_key_value)
@@ -104,6 +102,13 @@ def trans2lang():
                 text, new_key_value = get_value(local_key, quest['subtitle'])
                 key_value.update(new_key_value)
                 quest['subtitle'] = text
+        if quest.get('text'):
+            text = quest['text']
+            if len(text) > 0:
+                local_key = 'ftbquests.chapter.' + prefix + '.text'
+                tmp, new_key_value = get_value(local_key, quest['text'])
+                key_value.update(new_key_value)
+                quest['text'] = tmp
 
         # chapter.images[i][hover]
         if quest.get('images'):
@@ -117,7 +122,7 @@ def trans2lang():
                         key_value.update(new_key_value)
                         quest['images'][i]['hover'] = text
 
-        # chapter.quests[i][title,subtitle,description]
+        # chapter.quests[i][title,subtitle,description，text]
         # chapter.quests[i].tasks[j].[title,description]
         # chapter.quests[i].rewards[j].title
         if quest.get('quests'):
@@ -147,7 +152,14 @@ def trans2lang():
                         text, new_key_value = get_value(local_key, description)
                         key_value.update(new_key_value)
                         quest['quests'][i]['description'] = text
-                        
+                # text
+                if quests[i].get('text'):
+                    text = quests[i]['text']
+                    if len(text) > 0:
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.text'
+                        t, new_key_value = get_value(local_key, text)
+                        key_value.update(new_key_value)
+                        quest['quests'][i]['text'] = t
                 # tasks[j].title
                 if quests[i].get('tasks'):
                     tasks = quests[i]['tasks']
@@ -188,7 +200,7 @@ def trans2lang():
             print("************", output_path, "snbt替换结束************")
             fout.write(snbtlib.dumps(quest))
     # 生成json
-    with open('./zh_cn.json', 'w', encoding="utf-8") as fout:
+    with open('./en_us.json', 'w', encoding="utf-8") as fout:
         fout.write(json.dumps(key_value, indent=1, ensure_ascii=False))
         print("************json生成结束************")
         print("键值生成格式为【ftbquests.任务部分.任务原文件名称.区域.区域序号(从0开始).n*子区域.子区域序号(从0开始).行号(单行则无)】")
