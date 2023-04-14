@@ -4,7 +4,7 @@
 一个辅助翻译ftbquests任务的python脚本
 
 你可以用它:
-1. 机翻ftbquests任务，为方便后续润色其将会保留原文 
+1. 机翻ftbquests任务（机翻同时保留原文） 
 2. 为ftbquests生成lang文件，辅助任务汉化工作
 ### 使用:
 
@@ -27,16 +27,16 @@
  2. hugging-face API调用出错，网络环境不佳或者达到了速率限制
 
 ### 未来的计划
-1.翻译接口对接chatgpt（它在翻译效果上可以说很出色，大多数mc专业术语都可以识别保留）
+1.完善机器学习分支，并入主线，摆脱外部付费API限制
 
-2.模型优化
+2.制作UI
 
 ### Tips
-1. 如果你不想使用联网API可以选择branch中的model_trans分支，使用本地机翻模型版本
+1. 如果你不想使用付费的翻译API可以选择branch中的model_trans分支，使用本地机翻模型版本！
 
 2. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
 3. 脚本使用了[snbtlib](https://github.com/Tryanks/python-snbtlib)，如果提示缺少此库你可以尝试`pip install snbtlib`
 
-4. 如果你有更好的思路或者发现了某些bug，欢迎在此pr！
+4. 这个脚本的实现并不复杂甚至可以说粗略，如果你有更好的思路或者发现了某些bug，欢迎在此发起issue或pr！
 
