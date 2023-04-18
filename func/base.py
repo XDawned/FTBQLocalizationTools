@@ -118,19 +118,23 @@ def pre_process(line: str):
     if line.find('.jpg') + line.find('.png') != -2:
         print('检测到图片', line, '已保留')
         return None  # 新版ftbquest可以展示图片，遇到图片则略过
-    # 情景2：\\&表and
+    # 情景2：特殊事件，彩色或点击action等
+    if line.find(r'{\"') != -1:
+        print('检测到特殊事件', line, '已保留')
+        return None
+    # 情景3：\\&表and
     line = line.replace('\\\\&', 'PPP')
-    # 情景3：彩色区域
+    # 情景4：彩色区域
     # 彩色格式保留，让百度api忽略&
     # 目前已知的彩色格式只有a~f,0~9全部依次录入即可）百度api大多可以返回包含&.的汉化结果。
     pattern = re.compile(r'&([a-z,0-9]|#[0-9,A-F]{6})')
     if MODEL == 'baidu':
         line = pattern.sub(bracket, line)
-    # 情景4：物品引用
+    # 情景5：物品引用
     # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
     # 这里给出的方案是先将引用替换为临时词MAGIC_WORD，术语库中设置MAGIC_WORD-MAGIC_WORD来保留此关键词，然后借此在翻译后的句子中定位MAGIC_WORD用先前引用词换回
     line = re.sub(r'#\w+:\w+\b', MAGIC_WORD, re.sub(r'\\"', '\"', line))  # 辅助忽略转义符
-    # 情景5：超链接
+    # 情景6：超链接
     pattern = re.compile(r'(http|https)://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
     if re.search(pattern, line):
         print('检测到超链接', line, '已保留')
