@@ -4,5 +4,5 @@
   "HUGGING_FACE_TOKEN": "hf_tbaXz**************QKjNLj",
   "QUESTS_PATH" : "./ftbquests",
   "LANG_PATH" : "./en_us.json",
-  "MODEL" : "transformer"
+  "MODEL" : "baidu"
 }
