@@ -1,4 +1,3 @@
-import time
 from hashlib import md5
 from pathlib import Path
 import random
@@ -18,6 +17,8 @@ def get_config():
         global_var.set_value('QUESTS_PATH', config_data['QUESTS_PATH'])
         global_var.set_value('LANG_PATH', config_data['LANG_PATH'])
         global_var.set_value('KEEP_ORIGINAL', config_data['KEEP_ORIGINAL'])
+        global_var.set_value('BACK_FILL_PATH', config_data['BACK_FILL_PATH'])
+        global_var.set_value('BACK_FILL_LANG_PATH', config_data['BACK_FILL_LANG_PATH'])
 
 
 def make_output_path(path: Path) -> Path:

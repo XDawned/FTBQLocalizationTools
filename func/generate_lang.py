@@ -1,3 +1,5 @@
+import sys
+
 from func.base import *
 from global_var import *
 from pathlib import Path
@@ -77,9 +79,9 @@ def trans2lang():
                 fout.write(snbtlib.dumps(quest))
             continue
 
-        # loot_table[title]
+        # loot_tables[title]
         if quest.get('loot_size'):  # 仅以键值判断是否是loot_table内容
-            local_key = 'ftbquests.loot_table.' + prefix + '.title'
+            local_key = 'ftbquests.reward_tables.' + prefix + '.title'
             text, new_key_value = get_value(local_key, quest['title'])
             key_value.update(new_key_value)
             quest['title'] = text
@@ -87,6 +89,15 @@ def trans2lang():
             with open(output_path, 'w', encoding="utf-8") as fout:
                 print("************", output_path, "snbt替换结束************")
                 fout.write(snbtlib.dumps(quest))
+            continue
+
+        # data[title]
+        if quest.get('disable_gui'):  # 仅以键值判断是否是loot_table内容
+            if quest.get('title'):
+                local_key = 'ftbquests.data.' + prefix + '.title'
+            text, new_key_value = get_value(local_key, quest['title'])
+            key_value.update(new_key_value)
+            quest['title'] = text
             continue
 
         # chapter[title,subtitle,text]

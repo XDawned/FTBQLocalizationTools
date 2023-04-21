@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/badge/lib-snbtlib-brightgreen" alt="lib">
     </a>
     <a href="https://github.com/XDawned/FTBQLocalizationTools/releases/tag/v1.0">
-        <img src="https://img.shields.io/badge/releases-1.0-blue" alt="releases">
+        <img src="https://img.shields.io/badge/releases-1.1-blue" alt="releases">
     </a>
 
 # FTB任务本地化工具
@@ -20,18 +20,19 @@
 一个辅助翻译ftbquests任务的python脚本
 
 你可以用它:
-1. 机翻ftbquests任务（机翻同时保留原文）
-2. 为ftbquests生成lang文件，辅助任务汉化工作
+1. 生成机翻
+2. 生成lang文件
+3. lang文件回填
 ### 使用:
 
 1. 打开config.json，配置各项参数
-    - `[APPID]`  百度api-appid(模型不选用百度api可随意修改)
-    - `[APPKEY]` 百度api-appkey(模型不选用百度api可随意修改)
+    - `[APPID]`  百度api-appid
+    - `[APPKEY]` 百度api-appkey
     - `QUESTS_PATH` 要翻译或生成lang的文件目录，此目录下所有snbt文件都会被翻译#
-      【可选./ftbquests或./chapter，./chapter只翻译章节内容，./ftbquests额外包括战利品表名称、大章节标题等内容】
-    - `LANG_PATH` 要翻译的lang中json文件相对目录，默认为程序运行目录下的en_us.json
+    - `LANG_PATH` 要翻译的lang文件相对路径，默认为`./en_us.json`
     - `KEEP_ORIGINAL` 是否保留原文，可选`true、false`，默认为`true`(无需引号）
-    - 如果你有一定的代码基础建议采用此项目分支model_trans，其支持本地CPU或GPU运行翻译模型 [model_trans](https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans))
+    - `BACK_FILL_PATH` 回填源文件所在地即已经使用键值的任务所在文件夹，默认为`./ftbquests-trans`
+    - `BACK_FILL_LANG_PATH` 回填的lang文件所在地，默认为`./zh_cn.json`
 2. 将任务文件或语言文件放到指定位置(比如默认配置`QUESTS_PATH`为`./ftbquests`，即将从.minecraft/config下获取的ftbquests目录复制到程序同级目录下)
 3. 运行程序，选择相应功能
 ### 效果：
@@ -42,16 +43,16 @@
 2. API调用出错，网络环境不佳或者达到了速率限制
 
 ### 未来的计划
-1.完善机器学习分支，并入主线，摆脱外部付费API限制
+1.完善机器学习分支，并入主线，彻底摆脱外部付费API限制
 
-2.使用pyqt5制作UI，可以在此平台上进行FTBQ任务编辑
+2.制作UI，脱离游戏进行FTBQ任务简单编辑
 
 ### Tips
-1. 如果你不想使用付费的翻译API可以选择branch中的model_trans分支，使用本地机翻模型版本！
+1. 如果你不想使用付费的翻译API可以选择此项目分支[model_trans](https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans)，在本地运行翻译模型！
 
 2. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
-3. 脚本使用了[snbtlib](https://github.com/Tryanks/python-snbtlib)，如果提示缺少此库你可以尝试`pip install snbtlib`
+3. 本项目由[snbtlib](https://github.com/Tryanks/python-snbtlib)提供snbt文本解析，如果提示缺少此库你可以尝试`pip install snbtlib`
 
-4. 这个脚本的实现并不复杂甚至可以说粗略，如果你有更好的思路或者发现了某些bug，欢迎在此发起issue或pr！
+4. 这个脚本的实现并不复杂并且留下了注释，如果你有更好的思路或者发现了某些bug，欢迎在此发起issue或pr！
 

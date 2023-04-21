@@ -1,12 +1,10 @@
-import json
-
 import func
 
 
 if __name__ == '__main__':
     while True:
         print('********************')
-        print('主功能引导\n1.翻译任务snbt\n2.生成lang文件(默认位置config中WORK_PATH)\n3.翻译lang文件\n4.退出')
+        print('主功能引导\n1.翻译任务snbt\n2.生成lang文件(默认位置config中WORK_PATH)\n3.翻译lang文件\n4.回填lang文件\n5.退出')
         choice = input('请输入你要选择的功能：')
         if choice == '1':
             print('开始翻译，请确保你已提前完成配置！')
@@ -27,6 +25,8 @@ if __name__ == '__main__':
         elif choice == '3':
             func.lang_trans()
         elif choice == '4':
+            func.back_fill()
+        elif choice == '5':
             break
         else:
             print('无效输入')
