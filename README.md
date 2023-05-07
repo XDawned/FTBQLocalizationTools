@@ -48,7 +48,7 @@
 2.制作UI，脱离游戏进行FTBQ任务简单编辑
 
 ### Tips
-1. 如果你不想使用付费的翻译API可以选择此项目分支[model_trans](https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans)，在本地运行翻译模型！
+1. 如果你不想使用付费的翻译API可以选择此项目分支[model_trans]或releases中的full版本(https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans)，在本地运行翻译模型！
 
 2. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
