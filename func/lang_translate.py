@@ -33,7 +33,7 @@ def update_lang(lang: dict) -> dict:
 
 def make_output_path(path: Path) -> Path:
     parts = list(path.parts)
-    parts[0] = 'zh_cn.json'
+    parts[-1] = 'zh_cn.json'
     output_path = Path(*parts)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     return output_path
