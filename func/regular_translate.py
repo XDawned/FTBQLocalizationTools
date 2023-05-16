@@ -11,9 +11,10 @@ def get_text_fields(quest: str) -> list:
     title_line = re.findall(r'\stitle: "(.*)"', quest)
     subtitle_line = re.findall(r'\ssubtitle: "(.*)"', quest)
 
-    decription_lines = re.findall(r'\sdescription: \[[\n]*([^]]*)\]', quest)  # 先指定以关键字打头，再进一步匹配到左括号略过换行再截取所有右括号前字符，下同
-    decription_lines = [re.findall(r'"(.+)"', x) for x in decription_lines]
-    decription_lines = [token for t in decription_lines for token in t]  # 双层遍历降维
+    description_line = re.findall(r'\sdescription: "(.*)"', quest)  # 单行
+    description_lines = re.findall(r'\sdescription: \[[\n]*([^]]*)\]', quest)  # 先指定以关键字打头，再进一步匹配到左括号略过换行再截取所有右括号前字符，下同
+    description_lines = [re.findall(r'"(.+)"', x) for x in description_lines]
+    description_lines = [token for t in description_lines for token in t]  # 双层遍历降维
 
     text_search = re.search(r'\stext: \[[\n]*([^]]*)\]', quest)
     text_lines = re.findall(r'"(.+)"', text_search.group(1)) if text_search else ()
@@ -21,7 +22,8 @@ def get_text_fields(quest: str) -> list:
     line = []
     line.extend(title_line)
     line.extend(subtitle_line)
-    line.extend(decription_lines)
+    line.extend(description_line)
+    line.extend(description_lines)
     line.extend(text_lines)
 
     return line
@@ -59,7 +61,7 @@ def update_quest_file(input_path: Path, output_path: Path) -> None:
             print('无需翻译，未找到截取关键词', input_path)
             print(quest)
         else:
-            print('开始翻译 {input_path}.')
+            print('开始翻译', input_path)
         new_text = update_quest(quest, text_fields)
 
     with open(output_path, 'w', encoding="utf-8") as fout:
@@ -87,3 +89,6 @@ def regular_trans():
         output_path = make_output_path(input_path)  # 生成输出目录路径
         update_quest_file(input_path, output_path)  # 更新任务文件
     print("************翻译任务完成************")
+
+
+regular_trans()
