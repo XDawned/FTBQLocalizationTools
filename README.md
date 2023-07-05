@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/badge/lib-snbtlib-brightgreen" alt="lib">
     </a>
     <a href="https://github.com/XDawned/FTBQLocalizationTools/releases/tag/v1.0">
-        <img src="https://img.shields.io/badge/releases-1.2-blue" alt="releases">
+        <img src="https://img.shields.io/badge/releases-1.3-blue" alt="releases">
     </a>
 
 # FTB任务本地化工具
