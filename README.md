@@ -2,7 +2,7 @@
   <img width="115" height="115" src="https://i.postimg.cc/QtrcwLL7/icon.png">
 </div>
 <div align="center">
-    <a href="https://github.com/XDawned/FTBQLocalizationTools/blob/main/LICENSE">
+    <a href="https://github.com/XDawned/ModpackLocalizationTools/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/license-GPL%203.0-yellow.svg" alt="license">
     </a>
     <a href="https://github.com/Tryanks/python-snbtlib">
