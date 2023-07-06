@@ -3,7 +3,7 @@
 </div>
 <div align="center">
     <a href="https://github.com/XDawned/FTBQLocalizationTools/blob/main/LICENSE">
-        <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license">
+        <img src="https://img.shields.io/badge/license-GPL%203.0-yellow.svg" alt="license">
     </a>
     <a href="https://github.com/Tryanks/python-snbtlib">
         <img src="https://img.shields.io/badge/lib-snbtlib-brightgreen" alt="lib">
