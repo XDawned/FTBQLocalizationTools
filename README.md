@@ -17,7 +17,9 @@
 
 ### 介绍:
 
-一个辅助翻译ftbquests任务的python脚本
+一个辅助翻译ftbquests任务的python脚本，于cmd运行。
+
+图形化界面请选择[整合包本地化工具](https://github.com/XDawned/ModpackLocalizationTools)
 
 ### 用途:
 1. 处理FTBQuest、BetterQuesting任务文件
