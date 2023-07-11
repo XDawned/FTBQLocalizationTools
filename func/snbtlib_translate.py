@@ -1,6 +1,8 @@
 import snbtlib
 from func.base import *
 
+LOW = False
+
 
 def trans_field(quest: dict) -> dict:
     """
@@ -65,11 +67,12 @@ def update_quest_file(input_path: Path, output_path: Path) -> None:
     :param output_path:输出目录
     :return:无
     """
+    global LOW
     print("正在处理:" + TextStyle.LIGHT_YELLOW + str(input_path) + TextStyle.RESET)
     quest = get_quest(input_path)
     quest = update_quest(quest)  # 翻译相应内容
     with open(output_path, 'w', encoding="utf-8") as fout:
-        fout.write(snbtlib.dumps(quest))
+        fout.write(snbtlib.dumps(quest, compact=LOW))
 
 
 def get_quest(input_path: Path) -> str:

@@ -1,6 +1,6 @@
 import requests
 from func.base import TextStyle
-VERSION = 'v1.4'
+VERSION = 'v1.4.1'
 
 if __name__ == '__main__':
     try:
@@ -23,7 +23,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(TextStyle.RED + "更新检查失败,服务器貌似开小差了~" + TextStyle.RESET)
         while True:
-            print('**********FTBQ本地化小工具-v1.4**********')
+            print('**********FTBQ本地化小工具-%s**********' %VERSION)
             print('主功能引导\n1.翻译任务snbt\n2.生成lang文件(默认位置config中WORK_PATH)\n3.翻译lang文件\n4.回填lang文件\n5.退出')
             choice = input('请输入你要选择的功能：')
             if choice == '1':

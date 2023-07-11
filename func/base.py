@@ -69,6 +69,17 @@ def make_output_path(path: Path) -> Path:
     return output_path
 
 
+def check_low(text):
+    lines = text.splitlines()
+    for line in lines:
+        if line[-1] == ',':
+            print(TextStyle.BLUE, '检测到低版本任务文件', TextStyle.RESET)
+            return True
+        elif line not in '[{}]':
+            return False
+    return False
+
+
 def translate_line(line: str) -> str:
     """
     翻译送来的字符串
