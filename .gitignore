@@ -7,3 +7,8 @@ reward_tables/*
 chapters/*
 quests/*
 config.py
+*.spec
+hook-ctypes.macholib.py
+*.ico
+build
+dist

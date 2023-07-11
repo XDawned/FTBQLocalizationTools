@@ -2,11 +2,45 @@ from hashlib import md5
 from pathlib import Path
 import random
 import requests
+import torch.cuda
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
 import global_var
 import re
 import json
 
 MAGIC_WORD = r'{xdawned}'
+tokenizer = AutoTokenizer.from_pretrained("XDawned/minecraft-en-zh", trust_remote_code=True)
+if torch.cuda.is_available():
+    model = AutoModelForSeq2SeqLM.from_pretrained("XDawned/minecraft-en-zh", trust_remote_code=True).to('cuda')
+else:
+    model = AutoModelForSeq2SeqLM.from_pretrained("XDawned/minecraft-en-zh", trust_remote_code=True)
+
+
+class TextStyle:
+    # 定义常量，表示不同颜色和特殊样式
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    # 前景色
+    BLACK = '\033[30m'
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    LIGHT_YELLOW = '\033[93m'
+    MAGENTA = '\033[35m'
+    CYAN = '\033[36m'
+    WHITE = '\033[37m'
+    # 背景色
+    BLACK_BG = '\033[40m'
+    RED_BG = '\033[41m'
+    GREEN_BG = '\033[42m'
+    YELLOW_BG = '\033[43m'
+    BLUE_BG = '\033[44m'
+    MAGENTA_BG = '\033[45m'
+    CYAN_BG = '\033[46m'
+    WHITE_BG = '\033[47m'
 
 
 def get_config():
@@ -19,6 +53,7 @@ def get_config():
         global_var.set_value('KEEP_ORIGINAL', config_data['KEEP_ORIGINAL'])
         global_var.set_value('BACK_FILL_PATH', config_data['BACK_FILL_PATH'])
         global_var.set_value('BACK_FILL_LANG_PATH', config_data['BACK_FILL_LANG_PATH'])
+        global_var.set_value('API', config_data['API'])
 
 
 def make_output_path(path: Path) -> Path:
@@ -42,39 +77,53 @@ def translate_line(line: str) -> str:
     """
     APPID = global_var.get_value('APPID')
     APPKEY = global_var.get_value('APPKEY')
-    try:
-        # 关于语言选项参考文档 `https://api.fanyi.baidu.com/doc/21`
-        # 百度appid/appkey.（PS：密钥随IP绑定，设置密钥时候注意设置正确的IP否则无法使用！！！）
-        appid = APPID  # 请注册你自己的密钥
-        appkey = APPKEY  # 请注册你自己的密钥
-        from_lang = 'en'
-        to_lang = 'zh'
-        endpoint = 'http://api.fanyi.baidu.com'
-        path = '/api/trans/vip/translate'
-        url = endpoint + path
+    API = global_var.get_value('API')
+    if API == 'Baidu':
+        try:
+            # 关于语言选项参考文档 `https://api.fanyi.baidu.com/doc/21`
+            # 百度appid/appkey.（PS：密钥随IP绑定，设置密钥时候注意设置正确的IP否则无法使用！！！）
+            appid = APPID  # 请注册你自己的密钥
+            appkey = APPKEY  # 请注册你自己的密钥
+            from_lang = 'en'
+            to_lang = 'zh'
+            endpoint = 'http://api.fanyi.baidu.com'
+            path = '/api/trans/vip/translate'
+            url = endpoint + path
 
-        def make_md5(s, encoding='utf-8'):
-            return md5(s.encode(encoding)).hexdigest()
+            def make_md5(s, encoding='utf-8'):
+                return md5(s.encode(encoding)).hexdigest()
 
-        salt = random.randint(32768, 65536)
-        sign = make_md5(appid + line + str(salt) + appkey)
+            salt = random.randint(32768, 65536)
+            sign = make_md5(appid + line + str(salt) + appkey)
 
-        # Build request
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        payload = {'appid': appid, 'q': line, 'from': from_lang, 'to': to_lang, 'salt': salt,
-                   'sign': sign, 'action': 1}
+            # Build request
+            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            payload = {'appid': appid, 'q': line, 'from': from_lang, 'to': to_lang, 'salt': salt,
+                       'sign': sign, 'action': 1}
 
-        # Send request
-        r = requests.post(url, params=payload, headers=headers)
-        result = r.json()
-        return result.get('trans_result')[0].get('dst')
-    except TypeError:
-        '''
-        TypeError: 'NoneType' object is not subscriptable
-        八成是appid和appkey不正确或申请的服务中绑定的IP设置错误，小概率网络波动原因
-        '''
-        print("api调用出错")
-        return line
+            # Send request
+            r = requests.post(url, params=payload, headers=headers)
+            result = r.json()
+            return result.get('trans_result')[0].get('dst')
+        except TypeError:
+            '''
+            TypeError: 'NoneType' object is not subscriptable
+            八成是appid和appkey不正确或申请的服务中绑定的IP设置错误，小概率网络波动原因
+            '''
+            print(TextStyle.RED, "api调用出错", TextStyle.RESET)
+            return line
+    else:
+        try:
+            if torch.cuda.is_available():
+                input_ids = tokenizer.encode(line, return_tensors="pt").to('cuda')
+            else:
+                input_ids = tokenizer.encode(line, return_tensors="pt")
+            translated = model.generate(input_ids, max_length=128)
+            output = tokenizer.decode(translated[0], skip_special_tokens=True)
+            return output
+        except:
+            print(TextStyle.RED, "翻译模型调用出错！", TextStyle.RESET)
+            return line
 
 
 # magic方法，这样似乎就可以让baidu不翻译颜色代码
@@ -87,13 +136,14 @@ def debracket(m: re.Match):
 
 
 def pre_process(line: str):
+    API = global_var.get_value('API')
     # 情景1：图片介绍
     if line.find('.jpg') + line.find('.png') != -2:
-        print('检测到图片', line, '已保留')
+        print(TextStyle.YELLOW, '检测到图片', line, '已保留', TextStyle.RESET)
         return None  # 新版ftbquest可以展示图片，遇到图片则略过
     # 情景2：特殊事件，彩色或点击action等
     if line.find(r'{\"') != -1:
-        print('检测到特殊事件', line, '已保留')
+        print(TextStyle.YELLOW, '检测到特殊事件', line, '已保留', TextStyle.RESET)
         return None
     # 情景3：\\&表and
     line = line.replace('\\\\&', 'PPP')
@@ -101,7 +151,9 @@ def pre_process(line: str):
     # 彩色格式保留，让百度api忽略&
     # 目前已知的彩色格式只有a~f,0~9全部依次录入即可）百度api大多可以返回包含&.的汉化结果。
     pattern = re.compile(r'&([a-z,0-9]|#[0-9,A-F]{6})')
-    line = pattern.sub(bracket, line)
+    # 将方括号替换回来
+    if API == 'Baidu':
+        line = pattern.sub(bracket, line)
 
     # 情景5：物品引用
     # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
@@ -110,24 +162,25 @@ def pre_process(line: str):
     # 情景6：超链接
     pattern = re.compile(r'(http|https)://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
     if re.search(pattern, line):
-        print('检测到超链接', line, '已保留')
+        print(TextStyle.YELLOW, '检测到超链接', line, '已保留', TextStyle.RESET)
         return None  # 某行包含超链接，保险策略，直接略过此行
 
     return line
 
 
 def post_process(line, translate):
-    get_config()
     KEEP_ORIGINAL = global_var.get_value('KEEP_ORIGINAL')
+    API = global_var.get_value('API')
     # 将方括号替换回来
     pattern = re.compile(r'\[&&([a-z,0-9]|#[0-9,A-F]{6})]')
-    translate = pattern.sub(debracket, translate)
-    line = pattern.sub(debracket, line)
+    if API == 'Baidu':
+        translate = pattern.sub(debracket, translate)
+        line = pattern.sub(debracket, line)
     # 将物品引用换回
     quotes = re.findall(r'#\w+:\w+\b', line)  # 找出所有引用词
 
     if len(quotes) > 0:
-        print('在此行找到引用', quotes)
+        print(TextStyle.YELLOW, '在此行找到引用', quotes, TextStyle.RESET)
         count = 0
         # 找出MAGIC_WORD出现的所有位置并替换为对应引用词
         index = translate.find(MAGIC_WORD)
@@ -135,7 +188,7 @@ def post_process(line, translate):
             translate = re.sub(MAGIC_WORD, quotes[count], translate, 1)
             count = count + 1
             index = translate.find(MAGIC_WORD)
-        print(translate)
+        print(TextStyle.GREEN, translate, TextStyle.RESET)
     if KEEP_ORIGINAL:
         replacement = translate + "[--" + line + "--]"  # 原文保留
         return replacement

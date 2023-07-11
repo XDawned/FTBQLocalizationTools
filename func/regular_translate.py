@@ -41,7 +41,7 @@ def update_quest(quest: str, text_fields: Tuple[str]) -> str:
             pre_processed_line = pre_process(line)
             translate = translate_line(pre_processed_line)
             replacement = post_process(line, translate)
-            print("替换中：" + replacement)
+            print("替换中" + TextStyle.GREEN + replacement + TextStyle.RESET)
             quest = quest.replace('\"' + line + '\"',
                                   '\"' + replacement + '\"')  # 用双引号卡一下因为多处文本可能相同，防止重复替换替换到其它位置；处理过的就为 "原文[--*--]" 不再参与替换
     return quest
@@ -58,10 +58,10 @@ def update_quest_file(input_path: Path, output_path: Path) -> None:
         quest = fin.read()
         text_fields = get_text_fields(quest)  # 截取翻译内容
         if not text_fields:
-            print('无需翻译，未找到截取关键词', input_path)
+            print("无需翻译，未找到截取关键词" + TextStyle.YELLOW + str(input_path) + TextStyle.RESET)
             print(quest)
         else:
-            print('开始翻译', input_path)
+            print("开始翻译" + TextStyle.GREEN + str(input_path) + TextStyle.RESET)
         new_text = update_quest(quest, text_fields)
 
     with open(output_path, 'w', encoding="utf-8") as fout:
@@ -89,6 +89,3 @@ def regular_trans():
         output_path = make_output_path(input_path)  # 生成输出目录路径
         update_quest_file(input_path, output_path)  # 更新任务文件
     print("************翻译任务完成************")
-
-
-regular_trans()

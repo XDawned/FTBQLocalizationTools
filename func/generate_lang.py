@@ -15,8 +15,8 @@ def get_quest(input_path: Path) -> str:
             quest = snbtlib.loads(quest)  # 转化为json格式并读取
             return quest
         except TypeError:
-            print('snbtlib调用出错，可能是python环境版本过低或其它问题！')
-            sys.exit(0)
+            print(TextStyle.RED, 'snbtlib调用出错，可能是python环境版本过低或其它问题！', TextStyle.RESET)
+
 
 
 def get_value(prefix: str, text):
@@ -31,7 +31,7 @@ def get_value(prefix: str, text):
         for i in range(0, len(text)):
             if bool(re.search(r'\S', text[i])):  # 非空行，为此行生成键值
                 if text[i].find('{image:') == -1:  # 非图片
-                    local_key = prefix + '.' + str(i)
+                    local_key = (prefix + str(i)) if len(text) > 1 else prefix
                     key_value[local_key] = text[i]
                     text[i] = '{' + local_key + '}'
         return text, key_value
@@ -69,13 +69,13 @@ def trans2lang():
         if quest.get('chapter_groups'):
             chapter_groups = quest['chapter_groups']
             for i in range(0, len(chapter_groups)):
-                local_key = 'ftbquests.chapter_groups.' + prefix + '.' + str(i) + '.title'
+                local_key = 'ftbquests.chapter_groups.' + prefix + '.title' + str(i)
                 text, new_key_value = get_value(local_key, chapter_groups[i]['title'])
                 key_value.update(new_key_value)
                 quest['chapter_groups'][i]['title'] = text
             # 写入更新后的quest
             with open(output_path, 'w', encoding="utf-8") as fout:
-                print("************", output_path, "snbt替换结束************")
+                print(TextStyle.GREEN, "************", output_path, "snbt替换结束************", TextStyle.RESET)
                 fout.write(snbtlib.dumps(quest))
             continue
 
@@ -87,7 +87,7 @@ def trans2lang():
             quest['title'] = text
             # 写入更新后的quest
             with open(output_path, 'w', encoding="utf-8") as fout:
-                print("************", output_path, "snbt替换结束************")
+                print(TextStyle.GREEN, "************", output_path, "snbt替换结束************", TextStyle.RESET)
                 fout.write(snbtlib.dumps(quest))
             continue
 
@@ -128,7 +128,7 @@ def trans2lang():
                 if images[i].get('hover'):
                     hover = images[i]['hover']
                     if len(hover) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.images.' + str(i) + '.hover'
+                        local_key = 'ftbquests.chapter.' + prefix + '.images' + str(i) + '.hover'
                         text, new_key_value = get_value(local_key, hover)
                         key_value.update(new_key_value)
                         quest['images'][i]['hover'] = text
@@ -143,7 +143,7 @@ def trans2lang():
                 if quests[i].get('title'):
                     title = quests[i]['title']
                     if len(title) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.title'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.title'
                         text, new_key_value = get_value(local_key, title)
                         key_value.update(new_key_value)
                         quest['quests'][i]['title'] = text
@@ -151,7 +151,7 @@ def trans2lang():
                 if quests[i].get('subtitle'):
                     subtitle = quests[i]['subtitle']
                     if len(subtitle) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.subtitle'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.subtitle'
                         text, new_key_value = get_value(local_key, subtitle)
                         key_value.update(new_key_value)
                         quest['quests'][i]['subtitle'] = text
@@ -159,7 +159,7 @@ def trans2lang():
                 if quests[i].get('description'):
                     description = quests[i]['description']
                     if len(description) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.description'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.description'
                         text, new_key_value = get_value(local_key, description)
                         key_value.update(new_key_value)
                         quest['quests'][i]['description'] = text
@@ -167,7 +167,7 @@ def trans2lang():
                 if quests[i].get('text'):
                     text = quests[i]['text']
                     if len(text) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.text'
+                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.text'
                         t, new_key_value = get_value(local_key, text)
                         key_value.update(new_key_value)
                         quest['quests'][i]['text'] = t
@@ -178,7 +178,7 @@ def trans2lang():
                         for j in range(0, len(tasks)):
                             if tasks[j].get('title'):
                                 title = tasks[j]['title']
-                                local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.tasks.' + str(j) + '.title'
+                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.tasks' + str(j) + '.title'
                                 text, new_key_value = get_value(local_key, title)
                                 key_value.update(new_key_value)
                                 quest['quests'][i]['tasks'][j]['title'] = text
@@ -190,7 +190,7 @@ def trans2lang():
                         for j in range(0, len(tasks)):
                             if tasks[j].get('description'):
                                 description = tasks[j]['description']
-                                local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.tasks.' + str(j) + '.description'
+                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.tasks' + str(j) + '.description'
                                 text, new_key_value = get_value(local_key, description)
                                 key_value.update(new_key_value)
                                 quest['quests'][i]['tasks'][j]['description'] = text
@@ -202,21 +202,22 @@ def trans2lang():
                         for j in range(0, len(rewards)):
                             if rewards[j].get('title'):
                                 title = rewards[j]['title']
-                                local_key = 'ftbquests.chapter.' + prefix + '.quests.' + str(i) + '.rewards.' + str(j) + '.title'
+                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.rewards' + str(j) + '.title'
                                 text, new_key_value = get_value(local_key, title)
                                 key_value.update(new_key_value)
                                 quest['quests'][i]['rewards'][j]['title'] = text
         # 写入更新后的quest
         with open(output_path, 'w', encoding="utf-8") as fout:
-            print("************", output_path, "snbt替换结束************")
+            print(TextStyle.GREEN, "************", output_path, "snbt替换结束************", TextStyle.RESET)
             fout.write(snbtlib.dumps(quest))
     # 生成json
     with open('./en_us.json', 'w', encoding="utf-8") as fout:
         fout.write(json.dumps(key_value, indent=1, ensure_ascii=False))
         print("************json生成结束************")
-        print("键值生成格式为【ftbquests.任务部分.任务原文件名称.区域.区域序号(从0开始).n*子区域.子区域序号(从0开始).行号(单行则无)】")
+        print(TextStyle.CYAN, "键值生成格式为【ftbquests.任务部分.任务原文件名称.区域.区域序号(从0开始)+n*子区域.子区域序号(从0开始)+行号(单行则无)】")
+        print("Tip：键值后序号不连续可能为有空白行")
         print("关于如何使用此文件有两种形式:")
-        print("1.制作成resourcepack下资源包，可以参考https://www.mcmod.cn/post/2194.html")
-        print("2.制作成kubejs下资源包(依赖kubejs)，"
-              "可以参考https://www.reddit.com/r/feedthebeast/comments/qllnpq/how_to_translate_quests_in_a_modpack_and_my/")
+        print("1.制作成resourcepack下资源包，可以参考www.mcmod.cn/post/2194.html")
+        print("2.制作成kubejs下资源包(依赖kubejs)"
+              "可以参考www.reddit.com/r/feedthebeast/comments/qllnpq/how_to_translate_quests_in_a_modpack_and_my/", TextStyle.RESET)
 

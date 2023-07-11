@@ -19,7 +19,7 @@ def trans_field(quest: dict) -> dict:
                         if pre_line is not None:  # 空返回为图片，保留，不处理
                             translate = translate_line(pre_line)
                             replacement = post_process(pre_line, translate)
-                            print("替换中：" + replacement)
+                            print("替换中：" + TextStyle.GREEN + replacement + TextStyle.RESET)
                             line_list[index] = replacement
                 quest.update({key: line_list})  # 更新dict中文本
             else:  # 单行文本
@@ -27,7 +27,7 @@ def trans_field(quest: dict) -> dict:
                 if text:
                     translate = translate_line(text)
                     replacement = post_process(quest[key], translate)
-                    print("替换中：" + replacement)
+                    print("替换中：" + TextStyle.GREEN + replacement + TextStyle.RESET)
                     quest.update({key: replacement})  # 更新dict中文本
     return quest
 
@@ -65,11 +65,10 @@ def update_quest_file(input_path: Path, output_path: Path) -> None:
     :param output_path:输出目录
     :return:无
     """
-    print('正在处理:', input_path)
+    print("正在处理:" + TextStyle.LIGHT_YELLOW + str(input_path) + TextStyle.RESET)
     quest = get_quest(input_path)
     quest = update_quest(quest)  # 翻译相应内容
     with open(output_path, 'w', encoding="utf-8") as fout:
-        # print('翻译后\n', snbtlib.dumps(quest))
         fout.write(snbtlib.dumps(quest))
 
 
@@ -80,7 +79,7 @@ def get_quest(input_path: Path) -> str:
             quest = snbtlib.loads(quest)  # 转化为json格式并读取
             return quest
         except TypeError:
-            print('snbtlib调用出错，可能是python环境版本过低或其它问题！')
+            print(TextStyle.RED, 'snbtlib调用出错，可能是python环境版本过低或其它问题！', TextStyle.RESET)
 
 
 def snbtlib_trans():

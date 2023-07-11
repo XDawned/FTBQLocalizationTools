@@ -5,5 +5,6 @@
   "LANG_PATH" : "./en_us.json",
   "KEEP_ORIGINAL" : true,
   "BACK_FILL_PATH" : "./ftbquests-trans",
-  "BACK_FILL_LANG_PATH" : "./zh_cn.json"
+  "BACK_FILL_LANG_PATH" : "./zh_cn.json",
+  "API": "LOCAL"
 }
