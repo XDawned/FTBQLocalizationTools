@@ -1,24 +1,27 @@
 import requests
-from func.base import TextStyle
-VERSION = 'v1.4.1'
+from func.base import TextStyle, check_config_exists
+
+VERSION = 'v1.4.2'
 
 if __name__ == '__main__':
     try:
+        check_config_exists()
         import func
-        url = ''
+        url = 'https://mockapi.eolink.com/arvjB2Yc4668071e4e0351ac3a2e20131a45027fac017a0/ftbq/version'
         try:
             response = requests.get(url, timeout=8)
             if response.status_code == 200:
                 result = response.json()
-                latest_version = result[0]
-                logs = result[1]
-                link = result[2]
+                latest_version = result['version']
+                logs = result['logs'].split('--')
+                link = result['link']
                 if latest_version != VERSION:
-                    print("检测到更新!\n最新版本：")
+                    print(TextStyle.RED + TextStyle.BOLD + TextStyle.UNDERLINE + "检测到更新!!!\n" + TextStyle.RESET + "最新版本：")
                     print(TextStyle.GREEN + latest_version + TextStyle.RESET)
-                    print("更新日志")
-                    print(TextStyle.YELLOW + logs + TextStyle.RESET)
-                    print("下载链接")
+                    print("更新日志" + TextStyle.YELLOW)
+                    for log in logs:
+                        print(log)
+                    print(TextStyle.RESET + "下载链接")
                     print(TextStyle.GREEN + link + TextStyle.RESET)
         except Exception as e:
             print(TextStyle.RED + "更新检查失败,服务器貌似开小差了~" + TextStyle.RESET)
@@ -27,19 +30,7 @@ if __name__ == '__main__':
             print('主功能引导\n1.翻译任务snbt\n2.生成lang文件(默认位置config中WORK_PATH)\n3.翻译lang文件\n4.回填lang文件\n5.退出')
             choice = input('请输入你要选择的功能：')
             if choice == '1':
-                print('开始翻译，请确保你已提前完成配置！')
-                while True:
-                    print('********************')
-                    print('选择翻译解析器\n1.snbtlib(推荐)\n2.正则表达式(稳定，但易漏翻)\n3.退出')
-                    choice = input('请输入你要选择的解析器：')
-                    if choice == '1':
-                        func.snbtlib_trans()
-                    elif choice == '2':
-                        func.regular_trans()
-                    elif choice == '3':
-                        break
-                    else:
-                        print('无效输入')
+                func.quest_trans()
             elif choice == '2':
                 func.trans2lang()
             elif choice == '3':

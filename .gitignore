@@ -1,14 +1,9 @@
 .vscode/*
 __pycache__
-*-trans/*
-config/*
-ftbquests/*
-reward_tables/*
-chapters/*
-quests/*
-config.py
+ftbquests*/*
 *.spec
 hook-ctypes.macholib.py
 *.ico
 build
 dist
+snbtlib
