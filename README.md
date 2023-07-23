@@ -19,10 +19,10 @@
 
 一个辅助翻译ftbquests任务的python脚本，于cmd运行。
 
-图形化界面请选择[整合包本地化工具](https://github.com/XDawned/ModpackLocalizationTools)
+图形化界面请选择[整合包本地化工具](https://github.com/XDawned/ModpackLocalizationTools),同时支持BetterQuesting任务等其它可能出现的需汉化文件处理
 
 ### 用途:
-1. 处理FTBQuest、BetterQuesting任务文件
+1. 处理FTBQuest任务文件
 2. 处理lang文件
 3. 为未做本地化的任务文本进行本地化转化
 4. 为任务生成高质量机翻
