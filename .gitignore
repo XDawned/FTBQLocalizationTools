@@ -7,3 +7,5 @@ hook-ctypes.macholib.py
 build
 dist
 snbtlib
+models
+.idea

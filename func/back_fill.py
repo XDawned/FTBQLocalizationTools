@@ -3,10 +3,10 @@ from func.base import *
 
 def get_lang(input_path: Path) -> dict:
     with open(input_path, 'r', encoding="utf-8") as fin:
-        quest = fin.read()
+        lang = fin.read()
         try:
-            quest = json.loads(quest)  # 转化为json格式并读取
-            return quest
+            lang = json.loads(lang)  # 转化为json格式并读取
+            return lang
         except TypeError:
             print(TextStyle.RED, 'lang文件读取出错，可能是所读取的json文件格式错误或其它问题！', TextStyle.RESET)
 
