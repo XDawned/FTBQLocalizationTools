@@ -1,7 +1,7 @@
 import requests
 from func.base import TextStyle, check_config_exists
 
-VERSION = 'v1.4.2'
+VERSION = 'v1.4.6'
 
 if __name__ == '__main__':
     try:
@@ -16,7 +16,8 @@ if __name__ == '__main__':
                 logs = result['logs'].split('--')
                 link = result['link']
                 if latest_version != VERSION:
-                    print(TextStyle.RED + TextStyle.BOLD + TextStyle.UNDERLINE + "检测到更新!!!\n" + TextStyle.RESET + "最新版本：")
+                    print(TextStyle.RED + TextStyle.BOLD + TextStyle.UNDERLINE + "检测到更新!!!\n"
+                          + TextStyle.RESET + "最新版本：")
                     print(TextStyle.GREEN + latest_version + TextStyle.RESET)
                     print("更新日志" + TextStyle.YELLOW)
                     for log in logs:

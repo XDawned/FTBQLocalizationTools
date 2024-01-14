@@ -21,13 +21,22 @@ def update_lang_file(input_path: Path, output_path: Path):
 
 
 def update_lang(lang: dict) -> dict:
+    KEEP_ORIGINAL = global_var.get_value('KEEP_ORIGINAL')
     for key in lang:
-        line = lang[key]
-        pre_processed_line = pre_process(line)
-        translate = translate_line(pre_processed_line) if pre_processed_line else line
-        replacement = post_process(line, translate)
-        print("替换中：" + TextStyle.GREEN, replacement, TextStyle.RESET)
-        lang[key] = replacement
+        try:
+            line = lang[key]
+            pre_processed_line = pre_process(line)
+            translate = translate_line(pre_processed_line) if pre_processed_line else line
+            post_translate = post_process(line, translate)
+            print(f"\r文本翻译完成：\n原文：" + TextStyle.YELLOW + line + TextStyle.RESET)
+            print("\r译文：" + TextStyle.GREEN + post_translate + TextStyle.RESET)
+            if KEEP_ORIGINAL:
+                lang[key] = f"{line}[--{post_translate}--]"
+            else:
+                lang[key] = post_translate
+        except Exception as e:
+            print(TextStyle.RED + f'key：{key}项遇到错误{e}，请手动处理' + TextStyle.RESET)
+            continue
     return lang
 
 

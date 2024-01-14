@@ -7,6 +7,7 @@ import re
 import snbtlib
 import json
 from func.quest_translate import get_nbt_quest, get_snbt_quest
+
 LOW = False
 
 
@@ -25,12 +26,14 @@ def get_snbt_value(prefix: str, text):
                     local_key = (prefix + str(i)) if len(text) > 1 else prefix
                     key_value[local_key] = text[i]
                     text[i] = '{' + local_key + '}'
-        return key_value
+        # list为可变类型，可省去一步处理
+        return key_value, None
     else:
         if text.find('{image:') == -1:  # 非图片
             key_value[prefix] = text
             text = '{' + prefix + '}'
-        return key_value
+
+        return key_value, text
 
 
 def get_nbt_value(prefix: str, text):
@@ -70,208 +73,261 @@ def trans2lang():
     key_value = {}  # 用于存放新生成的键值及其对应的文本
     t = list(quest_path.rglob("*.snbt"))
     for i in tqdm(range(0, len(t)), colour='#0396FF'):
-        input_path = t[i]
-        output_path = make_output_path(input_path)
-        quest = get_snbt_quest(input_path)
-        prefix = '' + list(input_path.parts)[-1].replace('.snbt', '')  # 以snbt文件名为key的前缀便于回溯
-        # chapter_groups[title]
-        if quest.get('chapter_groups'):
-            chapter_groups = quest['chapter_groups']
-            for i in range(0, len(chapter_groups)):
-                local_key = 'ftbquests.chapter_groups.' + prefix + '.title' + str(i)
-                new_key_value = get_snbt_value(local_key, chapter_groups[i]['title'])
-                key_value.update(new_key_value)
-            # 写入更新后的quest
-            with open(output_path, 'w', encoding="utf-8") as fout:
-                print(TextStyle.GREEN, "************", output_path, "snbt替换结束************", TextStyle.RESET)
-                fout.write(snbtlib.dumps(quest, compact=LOW))
-            continue
-
-        # loot_tables[title]
-        if quest.get('loot_size'):  # 仅以键值判断是否是loot_table内容
-            if quest.get('title'):
-                local_key = 'ftbquests.reward_tables.' + prefix + '.title'
-                new_key_value = get_snbt_value(local_key, quest['title'])
-                key_value.update(new_key_value)
+        try:
+            input_path = t[i]
+            output_path = make_output_path(input_path)
+            quest, LOW = get_snbt_quest(input_path)
+            prefix = '' + list(input_path.parts)[-1].replace('.snbt', '')  # 以snbt文件名为key的前缀便于回溯
+            # chapter_groups-[title]
+            if quest.get('chapter_groups'):
+                chapter_groups = quest['chapter_groups']
+                for i in range(0, len(chapter_groups)):
+                    local_key = 'ftbquests.chapter_groups.' + prefix + '.title' + str(i)
+                    new_key_value, new_text = get_snbt_value(local_key, chapter_groups[i]['title'])
+                    if new_text:
+                        chapter_groups[i]['title'] = new_text
+                    key_value.update(new_key_value)
                 # 写入更新后的quest
                 with open(output_path, 'w', encoding="utf-8") as fout:
                     print(TextStyle.GREEN, "************", output_path, "snbt替换结束************", TextStyle.RESET)
                     fout.write(snbtlib.dumps(quest, compact=LOW))
-            continue
+                continue
 
-        # data[title]
-        if quest.get('disable_gui'):  # 仅以键值判断是否是loot_table内容
+            # loot_tables-[title]
+            if quest.get('loot_size'):  # 仅以键值判断是否是loot_table内容
+                if quest.get('title'):
+                    local_key = 'ftbquests.reward_tables.' + prefix + '.title'
+                    new_key_value, new_text = get_snbt_value(local_key, quest['title'])
+                    if new_text:
+                        quest['title'] = new_text
+                    key_value.update(new_key_value)
+                    # 写入更新后的quest
+                    with open(output_path, 'w', encoding="utf-8") as fout:
+                        print(TextStyle.GREEN, "************", output_path, "snbt替换结束************", TextStyle.RESET)
+                        fout.write(snbtlib.dumps(quest, compact=LOW))
+                continue
+
+            # data-[title]
+            if quest.get('disable_gui'):  # 仅以键值判断是否是loot_table内容
+                if quest.get('title'):
+                    local_key = 'ftbquests.data.' + prefix + '.title'
+                    new_key_value, new_text = get_snbt_value(local_key, quest['title'])
+                    if new_text:
+                        quest['title'] = new_text
+                    key_value.update(new_key_value)
+                continue
+            # chapter-[title,subtitle,text,description]
             if quest.get('title'):
-                local_key = 'ftbquests.data.' + prefix + '.title'
-                new_key_value = get_snbt_value(local_key, quest['title'])
+                local_key = 'ftbquests.chapter.' + prefix + '.title'
+                new_key_value, new_text = get_snbt_value(local_key, quest['title'])
+                if new_text:
+                    quest['title'] = new_text
                 key_value.update(new_key_value)
+            if quest.get('subtitle'):
+                subtitle = quest['subtitle']
+                if len(subtitle) > 0:
+                    local_key = 'ftbquests.chapter.' + prefix + '.subtitle'
+                    new_key_value, new_text = get_snbt_value(local_key, quest['subtitle'])
+                    if new_text:
+                        quest['subtitle'] = new_text
+                    key_value.update(new_key_value)
+            if quest.get('text'):
+                text = quest['text']
+                if len(text) > 0:
+                    local_key = 'ftbquests.chapter.' + prefix + '.text'
+                    new_key_value, new_text = get_snbt_value(local_key, quest['text'])
+                    if new_text:
+                        quest['text'] = new_text
+                    key_value.update(new_key_value)
+            if quest.get('description'):
+                text = quest['description']
+                if len(text) > 0:
+                    local_key = 'ftbquests.chapter.' + prefix + '.description'
+                    new_key_value, new_text = get_snbt_value(local_key, quest['description'])
+                    if new_text:
+                        quest['description'] = new_text
+                    key_value.update(new_key_value)
+
+            # chapter.images[i][hover]
+            if quest.get('images'):
+                images = quest['images']
+                for i in range(0, len(images)):
+                    if images[i].get('hover'):
+                        hover = images[i]['hover']
+                        if len(hover) > 0:
+                            local_key = 'ftbquests.chapter.' + prefix + '.images' + str(i) + '.hover'
+                            new_key_value, new_text = get_snbt_value(local_key, hover)
+                            if new_text:
+                                images[i]['hover'] = new_text
+                            key_value.update(new_key_value)
+
+            # chapter.quests[i][title,subtitle,description，text]
+            # chapter.quests[i].tasks[j].[title,description]
+            # chapter.quests[i].rewards[j].title
+            if quest.get('quests'):
+                quests = quest['quests']
+                for i in range(0, len(quests)):
+                    # title
+                    if quests[i].get('title'):
+                        title = quests[i]['title']
+                        if len(title) > 0:
+                            local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.title'
+                            new_key_value, new_text = get_snbt_value(local_key, title)
+                            if new_text:
+                                quests[i]['title'] = new_text
+                            key_value.update(new_key_value)
+                    # subtitle
+                    if quests[i].get('subtitle'):
+                        subtitle = quests[i]['subtitle']
+                        if len(subtitle) > 0:
+                            local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.subtitle'
+                            new_key_value, new_text = get_snbt_value(local_key, subtitle)
+                            if new_text:
+                                quests[i]['subtitle'] = new_text
+                            key_value.update(new_key_value)
+                    # description
+                    if quests[i].get('description'):
+                        description = quests[i]['description']
+                        if len(description) > 0:
+                            local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.description'
+                            new_key_value, new_text = get_snbt_value(local_key, description)
+                            if new_text:
+                                quests[i]['description'] = new_text
+                            key_value.update(new_key_value)
+                    # text
+                    if quests[i].get('text'):
+                        text = quests[i]['text']
+                        if len(text) > 0:
+                            local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.text'
+                            new_key_value, new_text = get_snbt_value(local_key, text)
+                            if new_text:
+                                quests[i]['text'] = new_text
+                            key_value.update(new_key_value)
+                    # tasks[j].title
+                    if quests[i].get('tasks'):
+                        tasks = quests[i]['tasks']
+                        if len(tasks) > 0:
+                            for j in range(0, len(tasks)):
+                                if tasks[j].get('title'):
+                                    title = tasks[j]['title']
+                                    local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.tasks' + str(
+                                        j) + '.title'
+                                    new_key_value, new_text = get_snbt_value(local_key, title)
+                                    if new_text:
+                                        tasks[j]['title'] = new_text
+                                    key_value.update(new_key_value)
+
+                    # tasks[j].description
+                    if quests[i].get('tasks'):
+                        tasks = quests[i]['tasks']
+                        if len(tasks) > 0:
+                            for j in range(0, len(tasks)):
+                                if tasks[j].get('description'):
+                                    description = tasks[j]['description']
+                                    local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.tasks' + str(
+                                        j) + '.description'
+                                    new_key_value, new_text = get_snbt_value(local_key, description)
+                                    if new_text:
+                                        tasks[j]['description'] = new_text
+                                    key_value.update(new_key_value)
+
+                    # rewards[j].title
+                    if quests[i].get('rewards'):
+                        rewards = quests[i]['rewards']
+                        if len(rewards) > 0:
+                            for j in range(0, len(rewards)):
+                                if rewards[j].get('title'):
+                                    title = rewards[j]['title']
+                                    local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.rewards' + str(
+                                        j) + '.title'
+                                    new_key_value, new_text = get_snbt_value(local_key, title)
+                                    if new_text:
+                                        rewards[j]['title'] = new_text
+                                    key_value.update(new_key_value)
+                                # rewards[j].item.tag
+                                if rewards[j].get('item'):
+                                    if type(rewards[j]['item']) == 'dict' and rewards[j]['item'].get('tag'):
+                                        if type(rewards[j]['item']['tag']) == 'dict' and rewards[j]['item']['tag'].get(
+                                                'display'):
+                                            if type(rewards[j]['item']['tag']['display']) == 'dict' and \
+                                                    rewards[j]['item']['tag']['display'].get('Lore'):
+                                                lore = rewards[j]['item']['tag']['display']['Lore']
+                                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(
+                                                    i) + '.rewards' + str(
+                                                    j) + '.item.tag.display.Lore'
+                                                new_key_value, new_text = get_snbt_value(local_key, lore)
+                                                if new_text:
+                                                    rewards[j]['item']['tag']['display']['Lore'] = new_text
+                                                key_value.update(new_key_value)
+                                                rewards[j]['item']['tag']['display']['Lore'] = lore
+                                            if rewards[j]['item']['tag']['display'].get('Name'):
+                                                name = rewards[j]['item']['tag']['display']['Name']
+                                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(
+                                                    i) + '.rewards' + str(
+                                                    j) + '.item.tag.display.Name'
+                                                new_key_value, new_text = get_snbt_value(local_key, name)
+                                                if new_text:
+                                                    rewards[j]['item']['tag']['display']['Name'] = new_text
+                                                key_value.update(new_key_value)
+            # 写入更新后的quest
+            with open(output_path, 'w', encoding="utf-8") as fout:
+                print(TextStyle.GREEN, "\r************", output_path, "snbt替换结束************", TextStyle.RESET)
+                fout.write(snbtlib.dumps(quest, compact=LOW))
+        except Exception as ex:
+            print(TextStyle.RED, f"{i}在翻译时遇到错误:{ex}", TextStyle.RESET)
             continue
 
-        # chapter[title,subtitle,text]
-        if quest.get('title'):
-            local_key = 'ftbquests.chapter.' + prefix + '.title'
-            new_key_value = get_snbt_value(local_key, quest['title'])
-            key_value.update(new_key_value)
-        if quest.get('subtitle'):
-            subtitle = quest['subtitle']
-            if len(subtitle) > 0:
-                local_key = 'ftbquests.chapter.' + prefix + '.subtitle'
-                new_key_value = get_snbt_value(local_key, quest['subtitle'])
-                key_value.update(new_key_value)
-        if quest.get('text'):
-            text = quest['text']
-            if len(text) > 0:
-                local_key = 'ftbquests.chapter.' + prefix + '.text'
-                new_key_value = get_snbt_value(local_key, quest['text'])
-                key_value.update(new_key_value)
-
-        # chapter.images[i][hover]
-        if quest.get('images'):
-            images = quest['images']
-            for i in range(0, len(images)):
-                if images[i].get('hover'):
-                    hover = images[i]['hover']
-                    if len(hover) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.images' + str(i) + '.hover'
-                        new_key_value = get_snbt_value(local_key, hover)
-                        key_value.update(new_key_value)
-
-        # chapter.quests[i][title,subtitle,description，text]
-        # chapter.quests[i].tasks[j].[title,description]
-        # chapter.quests[i].rewards[j].title
-        if quest.get('quests'):
-            quests = quest['quests']
-            for i in range(0, len(quests)):
-                # title
-                if quests[i].get('title'):
-                    title = quests[i]['title']
-                    if len(title) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.title'
-                        new_key_value = get_snbt_value(local_key, title)
-                        key_value.update(new_key_value)
-                # subtitle
-                if quests[i].get('subtitle'):
-                    subtitle = quests[i]['subtitle']
-                    if len(subtitle) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.subtitle'
-                        new_key_value = get_snbt_value(local_key, subtitle)
-                        key_value.update(new_key_value)
-                # description
-                if quests[i].get('description'):
-                    description = quests[i]['description']
-                    if len(description) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.description'
-                        new_key_value = get_snbt_value(local_key, description)
-                        key_value.update(new_key_value)
-                # text
-                if quests[i].get('text'):
-                    text = quests[i]['text']
-                    if len(text) > 0:
-                        local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.text'
-                        new_key_value = get_snbt_value(local_key, text)
-                        key_value.update(new_key_value)
-                # tasks[j].title
-                if quests[i].get('tasks'):
-                    tasks = quests[i]['tasks']
-                    if len(tasks) > 0:
-                        for j in range(0, len(tasks)):
-                            if tasks[j].get('title'):
-                                title = tasks[j]['title']
-                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.tasks' + str(
-                                    j) + '.title'
-                                new_key_value = get_snbt_value(local_key, title)
-                                key_value.update(new_key_value)
-
-                # tasks[j].description
-                if quests[i].get('tasks'):
-                    tasks = quests[i]['tasks']
-                    if len(tasks) > 0:
-                        for j in range(0, len(tasks)):
-                            if tasks[j].get('description'):
-                                description = tasks[j]['description']
-                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.tasks' + str(
-                                    j) + '.description'
-                                new_key_value = get_snbt_value(local_key, description)
-                                key_value.update(new_key_value)
-
-                # rewards[j].title
-                if quests[i].get('rewards'):
-                    rewards = quests[i]['rewards']
-                    if len(rewards) > 0:
-                        for j in range(0, len(rewards)):
-                            if rewards[j].get('title'):
-                                title = rewards[j]['title']
-                                local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.rewards' + str(
-                                    j) + '.title'
-                                new_key_value = get_snbt_value(local_key, title)
-                                key_value.update(new_key_value)
-                            if rewards[j].get('item'):
-                                if rewards[j]['item'].get('tag'):
-                                    if rewards[j]['item']['tag'].get('display'):
-                                        if rewards[j]['item']['tag']['display'].get('Lore'):
-                                            lore = rewards[j]['item']['tag']['display']['Lore']
-                                            local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.rewards' + str(
-                                                j) + '.item.tag.display.Lore'
-                                            new_key_value = get_snbt_value(local_key, lore)
-                                            key_value.update(new_key_value)
-                                            rewards[j]['item']['tag']['display']['Lore'] = lore
-                                        if rewards[j]['item']['tag']['display'].get('Name'):
-                                            name = rewards[j]['item']['tag']['display']['Name']
-                                            local_key = 'ftbquests.chapter.' + prefix + '.quests' + str(i) + '.rewards' + str(
-                                                j) + '.item.tag.display.Name'
-                                            new_key_value = get_snbt_value(local_key, name)
-                                            key_value.update(new_key_value)
-        # 写入更新后的quest
-        with open(output_path, 'w', encoding="utf-8") as fout:
-            print(TextStyle.GREEN, "\r************", output_path, "snbt替换结束************", TextStyle.RESET)
-            fout.write(snbtlib.dumps(quest, compact=LOW))
     t = list(quest_path.rglob("*.nbt"))
     for i in tqdm(range(0, len(t)), colour='#0396FF'):
-        input_path = t[i]
-        output_path = make_output_path(input_path)
-        quest = get_nbt_quest(input_path)
-        prefix = '' + list(input_path.parts)[-1].replace('.nbt', '')
-        # chapter[title,description,text]
-        if quest.get('title'):
-            local_key = 'ftbquests.chapter.' + prefix + '.title'
-            new_key_value = get_nbt_value(local_key, quest['title'])
-            key_value.update(new_key_value)
-        if quest.get('description'):
-            description = quest['description']
-            if len(description) > 0:
-                local_key = 'ftbquests.chapter.' + prefix + '.description'
-                new_key_value = get_nbt_value(local_key, quest['description'])
+        try:
+            input_path = t[i]
+            output_path = make_output_path(input_path)
+            quest = get_nbt_quest(input_path)
+            prefix = '' + list(input_path.parts)[-1].replace('.nbt', '')
+            # chapter[title,description,text]
+            if quest.get('title'):
+                local_key = 'ftbquests.chapter.' + prefix + '.title'
+                new_key_value = get_nbt_value(local_key, quest['title'])
                 key_value.update(new_key_value)
-        if quest.get('text'):
-            text = quest['text']
-            if len(text) > 0:
-                local_key = 'ftbquests.chapter.' + prefix + '.text'
-                new_key_value = get_nbt_value(local_key, quest['text'])
-                key_value.update(new_key_value)
+            if quest.get('description'):
+                description = quest['description']
+                if len(description) > 0:
+                    local_key = 'ftbquests.chapter.' + prefix + '.description'
+                    new_key_value = get_nbt_value(local_key, quest['description'])
+                    key_value.update(new_key_value)
+            if quest.get('text'):
+                text = quest['text']
+                if len(text) > 0:
+                    local_key = 'ftbquests.chapter.' + prefix + '.text'
+                    new_key_value = get_nbt_value(local_key, quest['text'])
+                    key_value.update(new_key_value)
 
-        # chapter.tasks[i][title,description,text]
-        if quest.get('tasks'):
-            if type(quest['tasks']) == nbt.TAG_List:
-                for i in range(0, len(quest['tasks'])):
-                    if quest['tasks'][i].get('title'):
-                        local_key = 'ftbquests.chapter.' + prefix + '.tasks' + str(i) + '.title'
-                        new_key_value = get_nbt_value(local_key, quest['tasks'][i]['title'])
-                        key_value.update(new_key_value)
-                    if quest['tasks'][i].get('description'):
-                        description = quest['tasks'][i]['description']
-                        if len(description) > 0:
-                            local_key = 'ftbquests.chapter.' + prefix + '.tasks' + str(i) + '.description'
-                            new_key_value = get_nbt_value(local_key, quest['tasks'][i]['description'])
+            # chapter.tasks[i][title,description,text]
+            if quest.get('tasks'):
+                if type(quest['tasks']) == nbt.TAG_List:
+                    for i in range(0, len(quest['tasks'])):
+                        if quest['tasks'][i].get('title'):
+                            local_key = 'ftbquests.chapter.' + prefix + '.tasks' + str(i) + '.title'
+                            new_key_value = get_nbt_value(local_key, quest['tasks'][i]['title'])
                             key_value.update(new_key_value)
-                    if quest['tasks'][i].get('text'):
-                        text = quest['tasks'][i]['text']
-                        if len(text) > 0:
-                            local_key = 'ftbquests.chapter.' + prefix + '.tasks' + str(i) + '.text'
-                            new_key_value = get_nbt_value(local_key, quest['tasks'][i]['text'])
-                            key_value.update(new_key_value)
-        # 写入更新后的quest
-        quest.write_file(output_path)
-        print(TextStyle.GREEN, "\r************", output_path, "替换结束************", TextStyle.RESET)
+                        if quest['tasks'][i].get('description'):
+                            description = quest['tasks'][i]['description']
+                            if len(description) > 0:
+                                local_key = 'ftbquests.chapter.' + prefix + '.tasks' + str(i) + '.description'
+                                new_key_value = get_nbt_value(local_key, quest['tasks'][i]['description'])
+                                key_value.update(new_key_value)
+                        if quest['tasks'][i].get('text'):
+                            text = quest['tasks'][i]['text']
+                            if len(text) > 0:
+                                local_key = 'ftbquests.chapter.' + prefix + '.tasks' + str(i) + '.text'
+                                new_key_value = get_nbt_value(local_key, quest['tasks'][i]['text'])
+                                key_value.update(new_key_value)
+            # 写入更新后的quest
+            quest.write_file(output_path)
+            print(TextStyle.GREEN, "\r************", output_path, "替换结束************", TextStyle.RESET)
+        except Exception as ex:
+            print(TextStyle.RED, f"{i}在翻译时遇到错误:{ex}", TextStyle.RESET)
+            continue
 
     # 生成json
     with open('./en_us.json', 'w', encoding="utf-8") as fout:

@@ -3,15 +3,13 @@ from hashlib import md5
 from pathlib import Path
 import random
 import requests
-# from transformers import pipeline
+import snbtlib
+
 import global_var
 import re
 import json
 
 MAGIC_WORD = r'{xdawned}'
-
-
-# pipe = pipeline("translation", model="./models/minecraft-en-zh")
 
 
 class TextStyle:
@@ -57,7 +55,7 @@ def check_config_exists():
         try:
             # 打开文件并写入配置内容
             with open(filename, 'w') as file:
-                json.dump(config, file)
+                json.dump(config, file, indent=1, ensure_ascii=False)
             print(f"配置文件已初始化于：{filename}")
         except Exception as e:
             print(f"未检测到配置文件,在尝试创建时出错,你可以手动创建：{e}")
@@ -75,7 +73,6 @@ def get_config():
         global_var.set_value('KEEP_ORIGINAL', config_data['KEEP_ORIGINAL'])
         global_var.set_value('BACK_FILL_PATH', config_data['BACK_FILL_PATH'])
         global_var.set_value('BACK_FILL_LANG_PATH', config_data['BACK_FILL_LANG_PATH'])
-        # global_var.set_value('API', config_data['API'])
 
 
 def make_output_path(path: Path) -> Path:
@@ -92,14 +89,21 @@ def make_output_path(path: Path) -> Path:
 
 
 def check_low(text):
-    lines = text.splitlines()
-    for line in lines:
-        if line[-1] == ',':
-            print(TextStyle.BLUE, '检测到低版本任务文件', TextStyle.RESET)
-            return True
-        elif line not in '[{}]':
-            return False
-    return False
+    match = re.search(r'\",$', text, re.MULTILINE)
+    if match:
+        print(TextStyle.BLUE, '检测到1.12.2老版本任务文件!!!', TextStyle.RESET)
+    return match
+
+
+def get_snbt_quest(input_path: Path):
+    with open(input_path, 'r', encoding="utf-8") as fin:
+        quest = fin.read()
+        low = check_low(quest)
+        try:
+            quest = snbtlib.loads(quest)  # 转化为json格式并读取
+            return quest, low
+        except TypeError:
+            print(TextStyle.RED, 'snbtlib调用出错，可能是python环境版本过低或其它问题！', TextStyle.RESET)
 
 
 def translate_line(line: str) -> str:
@@ -110,7 +114,6 @@ def translate_line(line: str) -> str:
     """
     APPID = global_var.get_value('APPID')
     APPKEY = global_var.get_value('APPKEY')
-    # API = global_var.get_value('API')
     try:
         # 关于语言选项参考文档 `https://api.fanyi.baidu.com/doc/21`
         # 百度appid/appkey.（PS：密钥随IP绑定，设置密钥时候注意设置正确的IP否则无法使用！！！）
@@ -127,12 +130,10 @@ def translate_line(line: str) -> str:
 
         salt = random.randint(32768, 65536)
         sign = make_md5(appid + line + str(salt) + appkey)
-
         # Build request
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         payload = {'appid': appid, 'q': line, 'from': from_lang, 'to': to_lang, 'salt': salt,
                    'sign': sign, 'action': 1}
-
         # Send request
         r = requests.post(url, params=payload, headers=headers)
         result = r.json()
@@ -144,47 +145,6 @@ def translate_line(line: str) -> str:
         '''
         print(TextStyle.RED, "api调用出错", TextStyle.RESET)
         return line
-    # if API == 'Baidu':
-    #     try:
-    #         # 关于语言选项参考文档 `https://api.fanyi.baidu.com/doc/21`
-    #         # 百度appid/appkey.（PS：密钥随IP绑定，设置密钥时候注意设置正确的IP否则无法使用！！！）
-    #         appid = APPID  # 请注册你自己的密钥
-    #         appkey = APPKEY  # 请注册你自己的密钥
-    #         from_lang = 'en'
-    #         to_lang = 'zh'
-    #         endpoint = 'http://api.fanyi.baidu.com'
-    #         path = '/api/trans/vip/translate'
-    #         url = endpoint + path
-    #
-    #         def make_md5(s, encoding='utf-8'):
-    #             return md5(s.encode(encoding)).hexdigest()
-    #
-    #         salt = random.randint(32768, 65536)
-    #         sign = make_md5(appid + line + str(salt) + appkey)
-    #
-    #         # Build request
-    #         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    #         payload = {'appid': appid, 'q': line, 'from': from_lang, 'to': to_lang, 'salt': salt,
-    #                    'sign': sign, 'action': 1}
-    #
-    #         # Send request
-    #         r = requests.post(url, params=payload, headers=headers)
-    #         result = r.json()
-    #         return result.get('trans_result')[0].get('dst')
-    #     except TypeError:
-    #         '''
-    #         TypeError: 'NoneType' object is not subscriptable
-    #         八成是appid和appkey不正确或申请的服务中绑定的IP设置错误，小概率网络波动原因
-    #         '''
-    #         print(TextStyle.RED, "api调用出错", TextStyle.RESET)
-    #         return line
-    # else:
-    #     try:
-    #         output = pipe(line)[0]['translation_text']
-    #         return output
-    #     except:
-    #         print(TextStyle.RED, "翻译模型调用出错！", TextStyle.RESET)
-    #         return line
 
 
 # magic方法，这样似乎就可以让baidu不翻译颜色代码
@@ -196,8 +156,28 @@ def debracket(m: re.Match):
     return m.group(0)[2:-1]
 
 
+def back_fill_magic_word(line, translate, pattern, type_info=''):
+    quotes = re.findall(pattern, line)  # 找出所有引用词
+    if len(quotes) > 0:
+        print(TextStyle.YELLOW, f"在此行找到{type_info}", quotes, TextStyle.RESET)
+        count = 0
+        # 找出MAGIC_WORD出现的所有位置并替换为对应引用词
+        index = translate.find(MAGIC_WORD)
+        while index != -1:
+            translate = re.sub(MAGIC_WORD, quotes[count], translate, 1)
+            count = count + 1
+            index = translate.find(MAGIC_WORD)
+    return translate
+
+
+def add_escape_quotes(text):
+    pattern = r'(?<!\\)"'
+    repl = r'\\"'
+    result = re.sub(pattern, repl, text)
+    return result
+
+
 def pre_process(line: str):
-    # API = global_var.get_value('API')
     # 情景1：图片介绍
     if line.find('.jpg') + line.find('.png') != -2:
         print(TextStyle.YELLOW, '检测到图片', line, '已保留', TextStyle.RESET)
@@ -213,8 +193,6 @@ def pre_process(line: str):
     # 目前已知的彩色格式只有a~f,0~9全部依次录入即可）百度api大多可以返回包含&.的汉化结果。
     pattern = re.compile(r'&([a-z,0-9]|#[0-9,A-F]{6})')
     # 将方括号替换回来
-    # if API == 'Baidu':
-    #     line = pattern.sub(bracket, line)
     line = pattern.sub(bracket, line)
     # 情景5：物品引用
     # 比如#minecraft:coals需要保留,打破此格式将会导致此章任务无法读取！！！
@@ -225,34 +203,23 @@ def pre_process(line: str):
     if re.search(pattern, line):
         print(TextStyle.YELLOW, '检测到超链接', line, '已保留', TextStyle.RESET)
         return None  # 某行包含超链接，保险策略，直接略过此行
-
+    # 情景7：翻页{@pagebreak}
+    if re.search(r'\{@\w+}', line):
+        print(TextStyle.YELLOW, '检测到点击事件', line, '已保留', TextStyle.RESET)
+        return None  # 某行包含点击事件，保险策略，直接略过此行
     return line
 
 
 def post_process(line, translate):
     KEEP_ORIGINAL = global_var.get_value('KEEP_ORIGINAL')
-    # API = global_var.get_value('API')
     # 将方括号替换回来
     pattern = re.compile(r'\[&&([a-z,0-9]|#[0-9,A-F]{6})]')
-    # if API == 'Baidu':
-    #     translate = pattern.sub(debracket, translate)
-    #     line = pattern.sub(debracket, line)
     translate = pattern.sub(debracket, translate)
     line = pattern.sub(debracket, line)
     # 将物品引用换回
-    quotes = re.findall(r'#\w+:\w+\b', line)  # 找出所有引用词
-
-    if len(quotes) > 0:
-        print(TextStyle.YELLOW, '在此行找到引用', quotes, TextStyle.RESET)
-        count = 0
-        # 找出MAGIC_WORD出现的所有位置并替换为对应引用词
-        index = translate.find(MAGIC_WORD)
-        while index != -1:
-            translate = re.sub(MAGIC_WORD, quotes[count], translate, 1)
-            count = count + 1
-            index = translate.find(MAGIC_WORD)
-        print(TextStyle.GREEN, translate, TextStyle.RESET)
-    if KEEP_ORIGINAL:
-        replacement = translate + "[--" + line + "--]"  # 原文保留
-        return replacement
+    translate = back_fill_magic_word(line=line, translate=translate, pattern=re.compile(r'#\w+:\w+\b'),
+                                     type_info='物品引用')
+    # translate = back_fill_magic_word(line=line, translate=translate, pattern=re.compile(r'\{@\w+}'), type_info='翻页')
+    # 修补缺失转义符
+    translate = add_escape_quotes(translate)
     return translate
