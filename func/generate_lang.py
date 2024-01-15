@@ -23,9 +23,10 @@ def get_snbt_value(prefix: str, text):
         for i in range(0, len(text)):
             if bool(re.search(r'\S', text[i])):  # 非空行，为此行生成键值
                 if text[i].find('{image:') == -1:  # 非图片
-                    local_key = (prefix + str(i)) if len(text) > 1 else prefix
-                    key_value[local_key] = text[i]
-                    text[i] = '{' + local_key + '}'
+                    if text[i] not in ['{@pagebreak}']:  # 非翻页
+                        local_key = (prefix + str(i)) if len(text) > 1 else prefix
+                        key_value[local_key] = text[i]
+                        text[i] = '{' + local_key + '}'
         # list为可变类型，可省去一步处理
         return key_value, None
     else:
