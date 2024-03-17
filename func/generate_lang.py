@@ -64,21 +64,19 @@ def make_output_path(path: Path) -> Path:
     # 分割路径
     parts = path_str.split(os.sep)
     # 找到"quests"部分的索引
-    quests_index = [i for i, part in enumerate(parts) if part == "quests"][0]
+    quests_indices = [i for i, part in enumerate(parts) if part == "quests"]
+    if not quests_indices:
+        raise ValueError(f"路径中未包含quests文件夹：{path}")
+    quests_index = quests_indices[0]
     # 在"quests"后添加"-trans"
     parts[quests_index] = parts[quests_index] + "-trans"
     # 重新组合路径
     new_path_str = os.sep.join(parts)
     # 将新路径字符串转换回Path对象
     output_path = Path(new_path_str)
+    # 创建对应的目录
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     return output_path
-
-    # parts = list(path.parts)
-    # parts[0] = parts[0] + "-trans"
-    # output_path = Path(*parts)
-    # output_path.parent.mkdir(parents=True, exist_ok=True)
-    # return output_path
-
 
 def trans2lang():
     global LOW
