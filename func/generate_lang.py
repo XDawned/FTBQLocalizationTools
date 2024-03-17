@@ -64,7 +64,7 @@ def make_output_path(path: Path) -> Path:
     # 分割路径
     parts = path_str.split(os.sep)
     # 找到"quests"部分的索引
-    quests_index = parts.index("quests")
+    quests_index = [i for i, part in enumerate(parts) if part == "quests"][0]
     # 在"quests"后添加"-trans"
     parts[quests_index] = parts[quests_index] + "-trans"
     # 重新组合路径
