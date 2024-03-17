@@ -59,11 +59,25 @@ def make_output_path(path: Path) -> Path:
     :param path:输入目录路径
     :return:自动生成的输出目录路径
     """
-    parts = list(path.parts)
-    parts[0] = parts[0] + "-trans"
-    output_path = Path(*parts)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    # 将输入路径转换为字符串
+    path_str = str(path)
+    # 分割路径
+    parts = path_str.split(os.sep)
+    # 找到"quests"部分的索引
+    quests_index = parts.index("quests")
+    # 在"quests"后添加"-trans"
+    parts[quests_index] = parts[quests_index] + "-trans"
+    # 重新组合路径
+    new_path_str = os.sep.join(parts)
+    # 将新路径字符串转换回Path对象
+    output_path = Path(new_path_str)
     return output_path
+
+    # parts = list(path.parts)
+    # parts[0] = parts[0] + "-trans"
+    # output_path = Path(*parts)
+    # output_path.parent.mkdir(parents=True, exist_ok=True)
+    # return output_path
 
 
 def trans2lang():
