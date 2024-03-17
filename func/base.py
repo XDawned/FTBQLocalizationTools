@@ -11,7 +11,7 @@ import snbtlib
 
 MAGIC_WORD = r'{xdawned}'
 
-pipe = pipeline("translation", model="./models/minecraft-en-zh")
+pipe = None
 
 
 class TextStyle:
