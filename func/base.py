@@ -186,9 +186,13 @@ def back_fill_magic_word(line, translate, pattern, type_info=''):
 
 
 def add_escape_quotes(text):
+    # 匹配没有添加单转义符的引号，并为之添加
     pattern = r'(?<!\\)"'
     repl = r'\\"'
     result = re.sub(pattern, repl, text)
+    result = result.replace('\\\"', '\"')
+    result = result.replace('\\&', '&')
+    result = result.replace('\\n', 'n')
     return result
 
 
