@@ -181,7 +181,7 @@ def add_escape_quotes(text, is_lang=False):
         result = result.replace('\\n', 'n')
         pattern = r'(?<!%)%'
         repl = r'%%'
-        result = re.sub(pattern, repl, text)
+        result = re.sub(pattern, repl, result)
     return result
 
 
