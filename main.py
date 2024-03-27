@@ -1,7 +1,7 @@
 import requests
 from func.base import TextStyle, check_config_exists
 
-VERSION = 'v1.4.6'
+VERSION = 'v1.4.7'
 
 if __name__ == '__main__':
     try:

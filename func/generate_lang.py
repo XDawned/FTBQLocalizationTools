@@ -25,13 +25,14 @@ def get_snbt_value(prefix: str, text):
                 if text[i].find('{image:') == -1:  # 非图片
                     if text[i] not in ['{@pagebreak}']:  # 非翻页
                         local_key = (prefix + str(i)) if len(text) > 1 else prefix
-                        key_value[local_key] = text[i]
+                        key_value[local_key] = add_escape_quotes(text[i], True)
+                        # 调整snbtlib读取到的部分添加双转义符的文本
                         text[i] = '{' + local_key + '}'
         # list为可变类型，可省去一步处理
         return key_value, None
     else:
         if text.find('{image:') == -1:  # 非图片
-            key_value[prefix] = text
+            key_value[prefix] = add_escape_quotes(text, True)
             text = '{' + prefix + '}'
 
         return key_value, text
