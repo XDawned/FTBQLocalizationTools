@@ -1,0 +1,14 @@
+[project]
+name = "FTBQLocalizationTools"
+version = "4.1.8"
+description = "A small script to simplify your translation work."
+requires-python = ">=3.12"
+dependencies = [
+    "ctranslate2>=4.6.0",
+    "nbt>=1.5.1",
+    "sacremoses>=0.1.1",
+    "sentencepiece>=0.2.0",
+    "snbtlib>=1.0.2",
+    "torch>=2.7.0",
+    "transformers>=4.51.3",
+]

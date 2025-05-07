@@ -57,15 +57,22 @@
     - `BACK_FILL_LANG_PATH` 回填的lang文件所在地，默认为`./zh_cn.json`
 2. 将任务文件或语言文件放到指定位置(比如默认配置`QUESTS_PATH`为`./ftbquests`，即将从.minecraft/config下获取的ftbquests目录复制到程序同级目录下)
 3. 运行程序，选择相应功能
-### 效果：
+### 运行源码
+1. 安装依赖环境 
+   ```shell
+   uv sync
+   ```
+2. 运行 `download.py` 下载模型权重到本地
+   ```shell
+   python download.py
+   ```
+3. 将模型转换为ct2格式
+   ```shell
+   ct2-transformers-converter --model minecraft-en-zh --output_dir minecraft-en-zh-ct2 --force
+   ```
+### 效果
 <img width=700 height=400 src="https://img2023.cnblogs.com/blog/2192803/202301/2192803-20230107125912964-39430206.png"/>
 
-### 项目推荐
-[整合包本地化工具](https://github.com/XDawned/ModpackLocalizationTools)
-
-搭载FluentDesign风格UI界面，提供整合包汉化一条龙服务
-
-为`mod、ftbq、bq、kubejs、contenttweaker、fancymenu`等整合包汉化相关提供自动化方案与简单cat辅助翻译平台
 ### 可能遇到的问题
 1. 闪退，大概率为配置文件不正确或异常操作
 2. API调用出错，网络环境不佳或者达到了速率限制
@@ -75,13 +82,9 @@
 2. 添加对更多富文本格式的支持
 
 
-
 ### Tips
-1. 如果你不想使用付费的翻译API可以选择此项目分支[model_trans](https://github.com/XDawned/FTBQLocalizationTools/tree/model_trans)或releases中的full版本，在本地运行翻译模型！
+1. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
 
-2. 为了获取更好的翻译效果，如果使用百度翻译api建议先在百度翻译api中扩充自己的术语库，原版术语可以参考[CFPA术语库](https://github.com/CFPAOrg/Glossary)
+2. 此项目代码结构简单明了且注释完整，欢迎各位一起参与到开发中来。如果你有更好的思路或者发现了某些bug，欢迎在此发起issue或pr！
 
-3. 本项目由[snbtlib](https://github.com/Tryanks/python-snbtlib)提供snbt文本解析，如果提示缺少此库你可以尝试`pip install snbtlib`
-
-4. 此项目代码结构简单明了且注释完整，欢迎各位一起参与到开发中来。如果你有更好的思路或者发现了某些bug，欢迎在此发起issue或pr！
-
+3. ct2的权重转化带来了接近2~3倍的速度提升。但这并不是必须的，如有需要你也可以通过修改`func/base`相关调用来省去掉这一步。
