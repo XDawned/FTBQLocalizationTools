@@ -138,11 +138,11 @@ def trans_field_nbt(quest):
                                 translate = translate_line(pre_line)
                                 post_translate = post_process(pre_line, translate)
                                 post_translate_list.append(post_translate)
+                                if KEEP_ORIGINAL:
+                                    quest[key][index].value = post_translate + f"[--{quest[key][index].value}--]"
+                                else:
+                                    quest[key][index].value = post_translate
                                 print(f"\r翻译中：\n{TextStyle.YELLOW+pre_line}\n{TextStyle.GREEN+post_translate+TextStyle.RESET}")
-                    if KEEP_ORIGINAL:
-                        quest[key].value = post_translate_list + quest[key].value
-                    else:
-                        quest[key].value = post_translate_list
                 else:  # 单行文本
                     line = quest[key].value
                     pre_line = pre_process(line)
@@ -151,7 +151,7 @@ def trans_field_nbt(quest):
                         post_translate = post_process(quest[key].value, translate)
                         print(f"\r翻译中：\n{TextStyle.YELLOW+line}\n{TextStyle.GREEN+post_translate+TextStyle.RESET}")
                         if KEEP_ORIGINAL:
-                            quest[key].value = f"{line}[--{post_translate}--]"
+                            quest[key].value = f"{post_translate}[--{line}--]"
                         else:
                             quest[key].value = post_translate
         except Exception as e:
