@@ -89,6 +89,9 @@ def make_output_path(path: Path) -> Path:
 
 
 def check_low(text):
+    """
+    检测任务是否为老版本
+    """
     match = re.search(r'\",$', text, re.MULTILINE)
     if match:
         print(TextStyle.BLUE, '检测到1.12.2老版本任务文件!!!', TextStyle.RESET)

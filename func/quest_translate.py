@@ -23,16 +23,21 @@ def trans_field_snbt(quest: dict) -> dict:
                     line_list = quest[key]
                     post_translate_list = []
                     for index in range(0, len(line_list)):
-                        if bool(re.search('[a-zA-Z]', line_list[index])):  # 忽略无字母的无效行
-                            print(f"\r翻译中：\n{TextStyle.YELLOW + line_list[index] + TextStyle.RESET}")
-                            pre_line = pre_process(line_list[index])
+                        line_text = line_list[index]
+                        # 排除不包含字母的无意义文本(需确保字母不是由彩色格式引起)
+                        content_validator = bool(re.search('[a-zA-Z]', re.sub(r'&[a-zA-Z0-9]', '', line_text)))
+                        if bool(content_validator):  # 翻译时忽略无字母的无效行
+                            print(f"\r翻译中：\n{TextStyle.YELLOW + line_text + TextStyle.RESET}")
+                            pre_line = pre_process(line_text)
                             if pre_line:  # 空返回为图片，保留，不处理
                                 translate = translate_line(pre_line)
                                 post_translate = post_process(pre_line, translate)
                                 post_translate_list.append(post_translate)
                             else:
-                                post_translate_list.append(line_list[index])
+                                post_translate_list.append(line_text)
                             print(f"{TextStyle.GREEN + post_translate_list[-1] + TextStyle.RESET}")
+                        else:
+                            post_translate_list.append(line_text)
                     if KEEP_ORIGINAL:
                         quest[key] = post_translate_list + quest[key]
                     else:
@@ -133,11 +138,11 @@ def trans_field_nbt(quest):
                                 translate = translate_line(pre_line)
                                 post_translate = post_process(pre_line, translate)
                                 post_translate_list.append(post_translate)
+                                if KEEP_ORIGINAL:
+                                    quest[key][index].value = post_translate + f"[--{quest[key][index].value}--]"
+                                else:
+                                    quest[key][index].value = post_translate
                                 print(f"\r翻译中：\n{TextStyle.YELLOW+pre_line}\n{TextStyle.GREEN+post_translate+TextStyle.RESET}")
-                    if KEEP_ORIGINAL:
-                        quest[key].value = post_translate_list + quest[key].value
-                    else:
-                        quest[key].value = post_translate_list
                 else:  # 单行文本
                     line = quest[key].value
                     pre_line = pre_process(line)
@@ -146,7 +151,7 @@ def trans_field_nbt(quest):
                         post_translate = post_process(quest[key].value, translate)
                         print(f"\r翻译中：\n{TextStyle.YELLOW+line}\n{TextStyle.GREEN+post_translate+TextStyle.RESET}")
                         if KEEP_ORIGINAL:
-                            quest[key].value = f"{line}[--{post_translate}--]"
+                            quest[key].value = f"{post_translate}[--{line}--]"
                         else:
                             quest[key].value = post_translate
         except Exception as e:
