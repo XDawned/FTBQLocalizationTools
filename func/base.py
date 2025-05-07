@@ -2,8 +2,10 @@ import os
 from hashlib import md5
 from pathlib import Path
 import random
+
+import ctranslate2
 import requests
-from transformers import pipeline
+from transformers import AutoTokenizer
 import global_var
 import re
 import json
@@ -11,7 +13,8 @@ import snbtlib
 
 MAGIC_WORD = r'{xdawned}'
 
-pipe = pipeline("translation", model="./models/minecraft-en-zh")
+translator = ctranslate2.Translator("./minecraft-en-zh-ct2")
+tokenizer = AutoTokenizer.from_pretrained("./minecraft-en-zh-ct2")
 
 
 class TextStyle:
@@ -93,6 +96,9 @@ def make_output_path(path: Path) -> Path:
 
 
 def check_low(text):
+    """
+    检测任务是否为老版本
+    """
     match = re.search(r'\",$', text, re.MULTILINE)
     if match:
         print(TextStyle.BLUE, '检测到1.12.2老版本任务文件!!!', TextStyle.RESET)
@@ -155,7 +161,10 @@ def translate_line(line: str) -> str:
             return line
     else:
         try:
-            output = pipe(line)[0]['translation_text']
+            source = tokenizer.convert_ids_to_tokens(tokenizer.encode(line))
+            results = translator.translate_batch([source])
+            target = results[0].hypotheses[0]
+            output = tokenizer.decode(tokenizer.convert_tokens_to_ids(target))
             return output
         except:
             print(TextStyle.RED, "翻译模型调用出错！", TextStyle.RESET)
