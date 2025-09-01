@@ -44,7 +44,7 @@ class TextStyle:
 
 
 def check_config_exists():
-    filename = 'config.json'
+    filename = 'config.json5'
     # 检查文件是否存在
     if not os.path.exists(filename):
         # 创建一个空的配置字典
@@ -70,11 +70,11 @@ def check_config_exists():
 
 
 def get_config():
-    with open('config.json', 'r', encoding="utf-8") as fin:
+    with open('config.json5', 'r', encoding="utf-8") as fin:
         config_data = json.loads(fin.read())
         global_var.set_value('APPID', config_data['APPID'])
         global_var.set_value('APPKEY', config_data['APPKEY'])
-        global_var.set_value('QUESTS_PATH', config_data['QUESTS_PATH'])
+        global_var.set_value('SOURCE_QUESTS_PATH', config_data['SOURCE_QUESTS_PATH'])
         global_var.set_value('LANG_PATH', config_data['LANG_PATH'])
         global_var.set_value('KEEP_ORIGINAL', config_data['KEEP_ORIGINAL'])
         global_var.set_value('BACK_FILL_PATH', config_data['BACK_FILL_PATH'])

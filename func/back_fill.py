@@ -1,7 +1,9 @@
+from typing import Any
+
 from func.base import *
 
 
-def get_lang(input_path: Path) -> dict:
+def get_lang(input_path: Path) -> Any | None:
     with open(input_path, 'r', encoding="utf-8") as fin:
         lang = fin.read()
         try:
@@ -36,10 +38,10 @@ def make_output_path(path: Path) -> Path:
 
 def back_fill():
     get_config()
-    BACK_FILL_PATH = global_var.get_value('BACK_FILL_PATH')
-    BACK_FILL_LANG_PATH = global_var.get_value('BACK_FILL_LANG_PATH')
-    file_path = Path(BACK_FILL_PATH)  # 要回填的任务目录
-    lang_path = Path(BACK_FILL_LANG_PATH)  # 要回填的lang文件地址
+    back_fill_quests_path = global_var.get_value('BACK_FILL_QUESTS_PATH')
+    back_fill_lang_path = global_var.get_value('BACK_FILL_LANG_PATH')
+    file_path = Path(back_fill_quests_path)  # 要回填的任务目录
+    lang_path = Path(back_fill_lang_path)  # 要回填的lang文件地址
     lang = get_lang(lang_path)
     for input_path in file_path.rglob("*.snbt"):
         output_path = make_output_path(input_path)  # 生成输出目录路径

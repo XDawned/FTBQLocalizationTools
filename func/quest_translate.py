@@ -180,8 +180,8 @@ def get_nbt_quest(input_path: Path) -> nbt.NBTFile:
 
 def quest_trans():
     get_config()
-    QUESTS_PATH = global_var.get_value('QUESTS_PATH')
-    quest_path = Path(QUESTS_PATH)  # 要翻译的目录
+    source_quests_path = global_var.get_value('SOURCE_QUESTS_PATH')
+    quest_path = Path(source_quests_path)  # 要翻译的目录
     t = list(quest_path.rglob("*.snbt"))
     for i in tqdm(range(0, len(t)), colour='#0396FF'):
         try:

@@ -72,8 +72,8 @@ def make_output_path(path: Path) -> Path:
 
 def lang_trans():
     get_config()
-    LANG_PATH = global_var.get_value('LANG_PATH')
-    input_path = Path(LANG_PATH)  # 要翻译的目录
+    lang_path = global_var.get_value('TARGET_LANG_PATH')
+    input_path = Path(lang_path)  # 要翻译的目录
     output_path = make_output_path(input_path)  # 生成输出目录路径
     update_lang_file(input_path, output_path)  # 更新任务文件
     print(TextStyle.CYAN, "你可以在en_us同级目录下的trans文件夹中找到翻译后的zh_cn lang文件.", TextStyle.RESET)

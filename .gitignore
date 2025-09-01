@@ -2,7 +2,7 @@
 __pycache__
 ftbquests*/*
 *.spec
-hook-ctypes.macholib.py
+hooks/hook-ctypes.macholib.py
 *.ico
 build
 dist
