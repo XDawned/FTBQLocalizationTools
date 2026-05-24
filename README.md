@@ -15,6 +15,15 @@
 # FTB任务本地化工具
 </div>
 
+### 🚨 维护中止通知
+
+> **重要提示**：由于高版本 FTBQuests 已经原生支持 `lang` 语言文件，**本仓库已停止独立维护与更新**。
+
+本项目的核心功能已经升级并合并至全新项目,新项目添加了对BQ、KubeJS、Mod等的处理,请各位移步至新仓库获取最新功能.
+
+👉 **新仓库地址**：[MCPackLocalizer](https://github.com/XDawned/MCPackLocalizer)
+
+
 ### 介绍:
 
 一个辅助翻译ftbquests任务的python脚本，于cmd运行。
